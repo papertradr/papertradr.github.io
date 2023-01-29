@@ -1,0 +1,45 @@
+CREATETABLE_LST: [
+    TABLE2
+]
+
+GRANT_REVOKE_PRIVILEGES_TABLES_LST: [
+    TABLE1
+]
+
+TABLES:
+    TABLE1:
+        SCHEMA: PUBLIC
+        ROLEGRANTS:
+            USER1:
+                - "SELECT"
+                - "INSERT"
+            USER2:
+                - "SELECT"
+        COLUMNS:
+            DATETIME:
+                NULLABLE: false
+                DTYPE: TIMESTAMP
+                PRIMARY: true
+            PID:
+                NULLABLE: false
+                DTYPE: BIGINT
+                PRIMARY: false
+
+
+    TABLE2:
+        SCHEMA: PUBLIC
+        ROLEGRANTS:
+            USER1:
+                - "SELECT"
+                - "INSERT"
+            USER2:
+                - "SELECT"
+        COLUMNS:
+            DATETIME:
+                NULLABLE: false
+                DTYPE: TIMESTAMP
+                PRIMARY: true
+            VALUE:
+                NULLABLE: false
+                DTYPE: FLOAT
+                PRIMARY: false

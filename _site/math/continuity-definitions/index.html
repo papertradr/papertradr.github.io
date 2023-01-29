@@ -1,0 +1,759 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>What is the definition of continuity? - Slow is smooth, smooth is fast</title>
+<meta name="description" content="When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.">
+
+
+  <meta name="author" content="Jae Won Choi">
+  
+  <meta property="article:author" content="Jae Won Choi">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Slow is smooth, smooth is fast">
+<meta property="og:title" content="What is the definition of continuity?">
+<meta property="og:url" content="http://localhost:4000/math/continuity-definitions/">
+
+
+  <meta property="og:description" content="When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.">
+
+
+
+
+
+  <meta name="twitter:site" content="@uhbubaboi">
+  <meta name="twitter:title" content="What is the definition of continuity?">
+  <meta name="twitter:description" content="When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.">
+  <meta name="twitter:url" content="http://localhost:4000/math/continuity-definitions/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2022-01-12T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/math/continuity-definitions/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Jae Won Choi",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Slow is smooth, smooth is fast Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Slow is smooth, smooth is fast
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/links/" title="useful links">links</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/" title="me">about</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/uhbubaboi.jpg" alt="Jae Won Choi" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Jae Won Choi</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>ex-Ph.D., data scientist, software/systems engineer</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://twitter.com/uhbubaboi" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/papertradr" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/jae-won-choi-746003232/" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">Linkedin</span></a></li>
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:uhbuba.collector@gmail.com" rel="me" class="u-email">
+            <meta itemprop="email" content="uhbuba.collector@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span>
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="What is the definition of continuity?">
+    <meta itemprop="description" content="When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.">
+    <meta itemprop="datePublished" content="2022-01-12T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/math/continuity-definitions/" class="u-url" itemprop="url">What is the definition of continuity?
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-01-12T00:00:00+09:00">January 12, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.</p>
+
+<h2 id="topological-definition-of-continuity">Topological Definition of Continuity</h2>
+
+<p>The topological definition of continuity is as follows:</p>
+
+<h3 id="open-set-continuity">Open set Continuity</h3>
+
+<blockquote>
+  <p><strong>(Open set continuity)</strong> Given a topological space $X$ and $Y$, a function $f : X \to Y$ is continuous if for every open set $\mathcal{O} \in Y$ the inverse image $f^{-1}(\mathcal{O}) = { x \in X : f(x) \in \mathcal{O}}$ is an open subset of $X$</p>
+
+</blockquote>
+
+<p>This rather general definition of continuity can be quite baffling. There’s another topological definition of continuity:</p>
+
+<h3 id="sequential-continuity">Sequential Continuity</h3>
+
+<blockquote>
+  <p><strong>(Sequential continuity)</strong> Given a topological space $X$ and $Y$, a function $f : X \to Y$ is sequentially continuous $f(x_n) \to f(x)$ whenever $x_n \to x$. 
+(<strong>Remark:</strong> Note that <strong><em>sequential continuity does NOT imply continuity</em></strong> but <strong><em>continuity does imply sequential continuity.)</em></strong></p>
+
+</blockquote>
+
+<p>However, in <strong>a metric space</strong>, the above two definitions are <strong>equivalent</strong>.</p>
+
+<h2 id="metric-space-definition-of-continuity">Metric space Definition of Continuity</h2>
+
+<p>One can easily see that metric space definitions require a distance function (obviously) instead of open sets or sequences. Here we introduce some of the most fundamental definitions of continuity:</p>
+
+<h3 id="point-wise-continuity">Point-wise continuity</h3>
+
+<blockquote>
+  <p><strong>(Point-wise continuity)</strong> Given a metric space $(X, d_1)$ and $(Y, d_2)$, a function $f: X \to Y$ is continuous at point $x \in X$ if for every $\epsilon &gt; 0$ there exists $\delta &gt; 0$ such that $d_2(f(x), f(y)) &lt; \epsilon$  whenever $d_1(x,y) &lt; \delta$ 
+<strong>(Remark: note that point-wise continuity is clearly a local property)</strong>.</p>
+
+</blockquote>
+
+<h3 id="uniform-continuity">Uniform continuity</h3>
+
+<blockquote>
+  <p><strong>(Uniform continuity)</strong> Given a metric space $(X, d_1)$ and $(Y, d_2)$,  a function $f: X \to Y$ is uniformly continuous on $X$  if for every $\epsilon &gt; 0$ there exists a $\delta &gt; 0$ such that whenever $d_1(x,y) &lt; \delta$, we have $d_2(f(x), f(y)) &lt; \epsilon$ 
+<strong>(Remark: note that uniform continuity is a local property).</strong></p>
+
+</blockquote>
+
+<p>As opposed to the topological definition, the $\delta\text{-}\epsilon$ continuity definitions require a metric space.</p>
+
+<p>There’s even more definition of continuity:</p>
+
+<h3 id="lipschitz-continuity">Lipschitz continuity</h3>
+
+<blockquote>
+  <p><strong>(Lipschitz continuity)</strong> Given two metric spaces $(X, d_X)$ and $(Y, d_Y)$, a function $f: X \to Y$ is Lipschitz continuous if there exists a real constant $K \ge 0$  such that for all $x_1$ and $x_2$ in $X$,</p>
+
+\[d_Y(f(x_1), f(x_2)) \le Kd_X(x_1, x_2)\]
+
+  <p>Any such $K$  is called a Lipschitz constant for the function $f$. 
+<strong>(Remark: note that Lipschitz continuity is a global property)</strong> .</p>
+
+</blockquote>
+
+<h3 id="a-hölder-condition">a-<strong>Hölder Condition</strong></h3>
+
+<blockquote>
+  <p><strong>($\alpha$-Holder condition)</strong> Given two metric spaces $(X, d_X)$  and $(Y, d_Y)$, a function $f: X \to Y$ satisfies $\alpha$-Holder condition (or $\alpha$-Holder continuous) if there exists $C_\alpha$ such that</p>
+
+\[d_Y(f(x), f(x')) \le C_\alpha d_X(x, x') \; \forall x,x' \in X\]
+
+  <p><strong>(Remark: note that Holder condition is a global property)</strong> .</p>
+
+</blockquote>
+
+<p>The above two definitions also rely on metric spaces. However, unlike $\delta\text{-}\epsilon$ definitions which are local properties, the above continuities are global properties, hence they are a stronger.</p>
+
+<h2 id="why-so-many-definitions">Why so many definitions?</h2>
+
+<h3 id="continuity-with-different-degree-of-constraints">Continuity with different degree of constraints</h3>
+
+<p>Clearly there are lots of definitions of continuity but there is a good reason for it. Some continuity conditions are <strong><em>stronger</em></strong> than others. For instance, uniform continuity is a defines continuity on a set as opposed to point-wise continuity that defines it on a single point. Similarly, Lipschitz continuity and holder condition are both <em>global</em> property with very strict condition that all pairs satisfy the bound.</p>
+
+<!-- ### Continuity preserves topological structure!
+
+Recall that a metric induces a topology. If an operator is continuous, then by the definition of a topological continuity, the open sets are preserved and the topological structure of an image remains intact(?). -->
+
+<h2 id="why-topological-definition-of-continuity">Why topological definition of continuity?</h2>
+
+<p>Then why do we have a topological definition and a metric space definition? Well the topological space is more general than the metric space (metric spaces are topological spaces with additional constraints). Hence the definition of continuity on a topological space also hold in metric spaces.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#continuous" class="page__taxonomy-item p-category" rel="tag">continuous</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#math" class="page__taxonomy-item p-category" rel="tag">math</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-01-12T00:00:00+09:00">January 12, 2022</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">Previous</a>
+    
+    
+      <a href="/machine-learning/on-off-online-offline-rl/" class="pagination--pager" title="on- and off-policy? online and offline reinforcement learning?
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/database/managing-db-with-mako/" rel="permalink">Managing DB with source code generator
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-12-15T00:00:00+09:00">December 15, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">We often write redundant codes. I personally had to write a parser for different market data protocols. This is not only tedious but also error prone. One wa...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/database/snowflake-udft/" rel="permalink">Snowflake and UDFTs
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-25T00:00:00+09:00">November 25, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-define...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/c++/mmap-raii/" rel="permalink">mmap RAII
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-04T00:00:00+09:00">November 4, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">There are many ways to share data between processes.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/data/US-market-data-part2/" rel="permalink">US Market Data (Part 2)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-10-25T00:00:00+09:00">October 25, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">US
+Bats (PITCH Feed handler)
+Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channe...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/uhbubaboi" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/papertradr" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://www.linkedin.com/in/jae-won-choi-746003232/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> Linkedin</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Jae Won Choi. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/math/continuity-definitions/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/math/continuity-definitions"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://uhbubaboi.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

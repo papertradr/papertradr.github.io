@@ -1,0 +1,787 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Snowflake and UDFTs - Slow is smooth, smooth is fast</title>
+<meta name="description" content="Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-defined table functions(UDFTs) in four different languages, of which python seemed the easiest to me. However, it turns out python UDFTs can be either stateless or stateful. This was different from the javascript UDFTs which seem to be stateful by default. So after spending hours on stackoverflow and documentation page, I found out that to enable stateful processing in python UDFTs, I need to specify the partition.">
+
+
+  <meta name="author" content="Jae Won Choi">
+  
+  <meta property="article:author" content="Jae Won Choi">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Slow is smooth, smooth is fast">
+<meta property="og:title" content="Snowflake and UDFTs">
+<meta property="og:url" content="http://localhost:4000/database/snowflake-udft/">
+
+
+  <meta property="og:description" content="Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-defined table functions(UDFTs) in four different languages, of which python seemed the easiest to me. However, it turns out python UDFTs can be either stateless or stateful. This was different from the javascript UDFTs which seem to be stateful by default. So after spending hours on stackoverflow and documentation page, I found out that to enable stateful processing in python UDFTs, I need to specify the partition.">
+
+
+
+
+
+  <meta name="twitter:site" content="@uhbubaboi">
+  <meta name="twitter:title" content="Snowflake and UDFTs">
+  <meta name="twitter:description" content="Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-defined table functions(UDFTs) in four different languages, of which python seemed the easiest to me. However, it turns out python UDFTs can be either stateless or stateful. This was different from the javascript UDFTs which seem to be stateful by default. So after spending hours on stackoverflow and documentation page, I found out that to enable stateful processing in python UDFTs, I need to specify the partition.">
+  <meta name="twitter:url" content="http://localhost:4000/database/snowflake-udft/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2022-11-25T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/database/snowflake-udft/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Jae Won Choi",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Slow is smooth, smooth is fast Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Slow is smooth, smooth is fast
+          
+        </a>
+        <ul class="visible-links">
+<li class="masthead__menu-item">
+              <a href="/links/" title="useful links">links</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="/about/" title="me">about</a>
+            </li>
+</ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/uhbubaboi.jpg" alt="Jae Won Choi" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Jae Won Choi</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>ex-Ph.D., data scientist, software/systems engineer</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://twitter.com/uhbubaboi" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/papertradr" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/jae-won-choi-746003232/" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">Linkedin</span></a></li>
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:uhbuba.collector@gmail.com" rel="me" class="u-email">
+            <meta itemprop="email" content="uhbuba.collector@gmail.com">
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span>
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Snowflake and UDFTs">
+    <meta itemprop="description" content="Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-defined table functions(UDFTs) in four different languages, of which python seemed the easiest to me. However, it turns out python UDFTs can be either stateless or stateful. This was different from the javascript UDFTs which seem to be stateful by default. So after spending hours on stackoverflow and documentation page, I found out that to enable stateful processing in python UDFTs, I need to specify the partition.">
+    <meta itemprop="datePublished" content="2022-11-25T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/database/snowflake-udft/" class="u-url" itemprop="url">Snowflake and UDFTs
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-25T00:00:00+09:00">November 25, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-defined table functions(UDFTs) in four different languages, of which python seemed the easiest to me. However, it turns out python UDFTs can be either stateless or stateful. This was different from the javascript UDFTs which seem to be stateful by default. So after spending hours on stackoverflow and documentation page, I found out that to enable stateful processing in python UDFTs, I need to specify the partition.</p>
+
+<p>Here’s an example of a javascript UFDT which is stateful by default:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">LAG_BY_TIME_JS</span><span class="p">(</span>
+    <span class="n">ROW_TIME_1</span> <span class="nb">TIMESTAMP</span><span class="p">,</span>
+    <span class="n">CURRENT_VALUE_1</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">RETURNS</span> <span class="k">TABLE</span><span class="p">(</span>
+    <span class="n">_ROW_TIME_1</span> <span class="nb">TIMESTAMP</span><span class="p">,</span>
+    <span class="n">_LAGGED_VALUE_1</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">_LAGTIMES</span> <span class="n">ARRAY</span>
+<span class="p">)</span>
+<span class="k">LANGUAGE</span> <span class="n">javascript</span>
+<span class="k">AS</span>
+<span class="err">$$</span>
+<span class="err">{</span>
+    <span class="k">initialize</span><span class="p">:</span> <span class="k">function</span><span class="p">(</span><span class="n">argumentInfo</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span> <span class="err">{</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">buffer</span> <span class="o">=</span><span class="p">[];</span>
+    <span class="err">}</span><span class="p">,</span>
+    <span class="n">processRow</span><span class="p">:</span> <span class="k">function</span><span class="p">(</span><span class="k">row</span><span class="p">,</span> <span class="n">rowWriter</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span> <span class="err">{</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">buffer</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+            <span class="err">{</span>
+                <span class="n">rowtime_1</span><span class="p">:</span> <span class="k">row</span><span class="p">.</span><span class="n">ROW_TIME_1</span><span class="p">,</span> 
+                <span class="n">value_1</span><span class="p">:</span> <span class="k">row</span><span class="p">.</span><span class="n">CURRENT_VALUE_1</span>
+            <span class="err">}</span>
+        <span class="p">);</span>
+        <span class="n">rowWriter</span><span class="p">.</span><span class="n">writeRow</span><span class="p">(</span>
+            <span class="err">{</span>
+                <span class="n">_ROW_TIME_1</span><span class="p">:</span> <span class="k">row</span><span class="p">.</span><span class="n">ROW_TIME_1</span><span class="p">,</span>
+                <span class="n">_LAGGED_VALUE_1</span><span class="p">:</span> <span class="k">row</span><span class="p">.</span><span class="n">CURRENT_VALUE_1</span><span class="p">,</span>
+                <span class="n">_LAGTIMES</span><span class="p">:</span> <span class="p">[</span><span class="n">this</span><span class="p">.</span><span class="n">buffer</span><span class="p">.</span><span class="k">length</span><span class="p">]</span>
+            <span class="err">}</span>
+        <span class="p">)</span>
+    <span class="err">}</span>
+<span class="err">}</span>
+<span class="err">$$</span><span class="p">;</span>
+</code></pre></div></div>
+<p>Here is a python UFDT:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">LAG_BY_TIME_PY</span><span class="p">(</span>
+    <span class="n">ROW_TIME</span> <span class="nb">TIMESTAMP</span><span class="p">,</span>
+    <span class="n">CURRENT_VALUE</span> <span class="nb">float</span>
+<span class="p">)</span>
+<span class="k">RETURNS</span> <span class="k">TABLE</span><span class="p">(</span>
+    <span class="n">_ROW_TIME</span> <span class="nb">TIMESTAMP</span><span class="p">,</span>
+    <span class="n">_LAGGED_VALUE</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">_LAGTIMES</span> <span class="n">ARRAY</span>
+<span class="p">)</span>
+<span class="k">LANGUAGE</span> <span class="n">python</span>
+<span class="n">RUNTIME_VERSION</span><span class="o">=</span><span class="mi">3</span><span class="p">.</span><span class="mi">8</span>
+<span class="n">PACKAGES</span><span class="o">=</span><span class="p">(</span><span class="s1">'numpy'</span><span class="p">,</span> <span class="s1">'pandas'</span><span class="p">)</span>
+<span class="k">HANDLER</span><span class="o">=</span><span class="s1">'LagByTime'</span>
+<span class="k">AS</span>
+<span class="err">$$</span>
+<span class="k">class</span> <span class="n">LagByTime</span><span class="p">:</span>
+    <span class="n">def</span> <span class="n">__init__</span><span class="p">(</span><span class="k">self</span><span class="p">):</span>
+        <span class="k">self</span><span class="p">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="n">def</span> <span class="n">process</span><span class="p">(</span><span class="k">self</span><span class="p">,</span> <span class="n">rowtime</span><span class="p">,</span> <span class="n">current_value</span><span class="p">,</span> <span class="n">lagtimes</span><span class="p">):</span>
+        <span class="k">self</span><span class="p">.</span><span class="n">buffer</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">rowtime</span><span class="p">,</span> <span class="n">current_value</span><span class="p">,))</span>
+        
+        <span class="n">yield</span> <span class="p">(</span>
+            <span class="k">self</span><span class="p">.</span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="k">self</span><span class="p">.</span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="n">len</span><span class="p">(</span><span class="k">self</span><span class="p">.</span><span class="n">buffer</span><span class="p">)]</span>
+        <span class="p">)</span>
+        
+    <span class="n">def</span> <span class="n">end_partition</span><span class="p">(</span><span class="k">self</span><span class="p">):</span>
+        <span class="k">self</span><span class="p">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="err">$$</span><span class="p">;</span>
+</code></pre></div></div>
+<p>While both UFDTs may look similar, they are different in that python UFDT can be either stateful or stateless. In our case, we wish to use stateful python UDFT. In order to do that, when using our function in snowflake sql, <strong>we need to specify the partition column</strong>:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
+     <span class="n">STOCK</span>
+    <span class="p">,</span><span class="nb">DATETIME</span>
+    <span class="p">,</span><span class="n">PRICE</span>
+<span class="k">FROM</span> 
+    <span class="n">MYTABLE</span><span class="p">,</span> 
+    <span class="k">TABLE</span><span class="p">(</span>
+        <span class="n">LAG_BY_TIME_PY</span><span class="p">(</span>
+            <span class="n">to_epoch</span><span class="p">(</span><span class="nb">DATETIME</span><span class="p">),</span> 
+            <span class="n">PRICE</span><span class="p">::</span><span class="nb">float</span>
+        <span class="p">)</span> <span class="n">OVER</span> <span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">STOCK</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">DATETIME</span> <span class="k">DESC</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">STOCK</span><span class="p">,</span> <span class="nb">DATETIME</span>
+<span class="p">;</span>
+</code></pre></div></div>
+
+<h1 id="other-remarks">Other Remarks</h1>
+
+<p>We’ve recently started using snowflake to analyze our timeseries data. Having only used postgresql and mysql, it took some time for me to learn snowsql and the snowflake database. Here are some pros and cons:</p>
+
+<h2 id="1-snowflake-supports-nanosecond-precision">
+<img class="emoji" title=":+1:" alt=":+1:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png" height="20" width="20"> snowflake supports nanosecond precision</h2>
+<p>Unlike postgresql or mysql that only support microsecond precision, snowflake provides nanosecond precision for their <code class="language-plaintext highlighter-rouge">TIMESTAMP</code> datatypes. This is a major plus for us since most of our analysis work requires nanosecond precision.</p>
+
+<h2 id="1-snowflake-does-not-enforce-primary-key-constraint">
+<img class="emoji" title=":+1:" alt=":+1:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png" height="20" width="20"> snowflake does NOT enforce primary key constraint</h2>
+<p>This at first sounded like a bad idea until we realized that our data contained duplicate primary keys (we used timestamp as our primary key, even though we use nanosecond precision, there are instances where two events can occur at exactly the same time).</p>
+
+<h2 id="-1-snowflake-python-connector-is-slow">
+<img class="emoji" title=":-1:" alt=":-1:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f44e.png" height="20" width="20"> Snowflake python connector is slow</h2>
+<p>Snowflake provides a connector for python so that you can use your favorite python orms (e.g. sqlalchemy). However, my experience so far has not been great. Using snowflake connector made things at least 50% slower. It could be that converting the result to pandas dataframe takes time but for now, I’m sticking with sql on snowsql instead of python connectors.</p>
+
+<h2 id="-1-snowflakes-staging-and-copying-is-very-slow-with-python-connector">
+<img class="emoji" title=":-1:" alt=":-1:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f44e.png" height="20" width="20"> Snowflake’s staging and copying is very slow (with python connector)</h2>
+<p>When dealing with terabytes of data, we need fast upload and copy speed. This could be partly due to our physical distance to the datacenter (our datacenter is on the other side of the planet). However, compared to <strong>AWS</strong>, snowflake’s uploading speed is abysmal. Additionally, once I uploaded a file to the stage, copying into the table has also been very slow. Both staging and copying were done via python connector so I may try it again with snowsql to see if it speed things up.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#database" class="page__taxonomy-item p-category" rel="tag">database</a><span class="sep">, </span>
+    
+      <a href="/tags/#javascript" class="page__taxonomy-item p-category" rel="tag">javascript</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a><span class="sep">, </span>
+    
+      <a href="/tags/#snowflake" class="page__taxonomy-item p-category" rel="tag">snowflake</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#database" class="page__taxonomy-item p-category" rel="tag">database</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-11-25T00:00:00+09:00">November 25, 2022</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/c++/mmap-raii/" class="pagination--pager" title="mmap RAII
+">Previous</a>
+    
+    
+      <a href="/database/managing-db-with-mako/" class="pagination--pager" title="Managing DB with source code generator
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/database/managing-db-with-mako/" rel="permalink">Managing DB with source code generator
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-12-15T00:00:00+09:00">December 15, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">We often write redundant codes. I personally had to write a parser for different market data protocols. This is not only tedious but also error prone. One wa...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/c++/mmap-raii/" rel="permalink">mmap RAII
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-04T00:00:00+09:00">November 4, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">There are many ways to share data between processes.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/data/US-market-data-part2/" rel="permalink">US Market Data (Part 2)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-10-25T00:00:00+09:00">October 25, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">US
+Bats (PITCH Feed handler)
+Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channe...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/data/US-market-data-part1/" rel="permalink">US Market Data (Part 1)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-10-01T00:00:00+09:00">October 1, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Terminlogies:
+
+  L1: Level 1
+  L2: Level 2
+  L3: Level 3
+  OLD: Order Level data
+  LOB: Limit order book
+
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/uhbubaboi" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/papertradr" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://www.linkedin.com/in/jae-won-choi-746003232/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> Linkedin</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">© 2023 Jae Won Choi. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/database/snowflake-udft/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/database/snowflake-udft"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://uhbubaboi.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

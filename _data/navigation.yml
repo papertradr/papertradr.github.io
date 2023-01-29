@@ -1,0 +1,17 @@
+# main links
+main:
+#  - title: "math"
+#    url: /categories/math/
+#    description: "linear algebra, real analysis, functional analysis, etc"
+#  - title: "machine learning"
+#    url: /categories/machine-learning/
+#    description: "reinforcement learning, generative models, etc"
+#  - title: "data science"
+#    url: /categories/data-science/
+#    description: "data sciency stuff"
+  - title: "links"
+    url: /links/
+    description: "useful links"
+  - title: "about"
+    url: /about/
+    description: "me"

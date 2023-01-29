@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-01-29T15:58:44+09:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Slow is smooth, smooth is fast</title><subtitle>math, machine learning, data science, finance</subtitle><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><entry><title type="html">Managing DB with source code generator</title><link href="http://localhost:4000/database/managing-db-with-mako/" rel="alternate" type="text/html" title="Managing DB with source code generator" /><published>2022-12-15T00:00:00+09:00</published><updated>2022-12-15T00:00:00+09:00</updated><id>http://localhost:4000/database/managing-db-with-mako</id><content type="html" xml:base="http://localhost:4000/database/managing-db-with-mako/">&lt;p&gt;We often write redundant codes. I personally had to write a parser for different market data protocols. This is not only tedious but also error prone. One way to tackle this problem is to normalize all data into a single in-house protocol. However, if there is a new protocol that your in-house protocol does not support, then you need to redesign your protocol which could be a pain. Additionally, you need to know all the different protocols in order to implement a normalized protocol that takes all of them into account.&lt;/p&gt;
+
+&lt;p&gt;Another redundant code I had to write recently was sql code to manage database systems. While most sql databases provide a gui (pgadmin, mysql workbench), some operations take a long time that you just want to run a script in the background. Other sql codes I had to write repeatedly are&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Modifying privileges to schema and table for each user&lt;/li&gt;
+  &lt;li&gt;Modyifying columns in tables&lt;/li&gt;
+  &lt;li&gt;Copying data into table&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;just to name a few.&lt;/p&gt;
+
+&lt;p&gt;After searching the internet and reading lots of blog posts, I’ve finally discovered a better way to handle redundant codes - source code generator. I’ve personally used Jinja2 before when using python’s Django. Of the generators out there, I chose to use Mako since it has a lot of features and came after Jinja2, so it must be better than Jinja2.&lt;/p&gt;
+
+&lt;h2 id=&quot;mako&quot;&gt;Mako&lt;/h2&gt;
+&lt;p&gt;Mako is a template code generator that takes a yaml file and a template file to generate a source code in a language of your choosing. You can find more &lt;a href=&quot;https://www.makotemplates.org/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;yaml-file&quot;&gt;YAML file&lt;/h2&gt;
+&lt;p&gt;In your yaml file, you define your parameters or the specification of your database tables. Here I have to parameters - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CREATETABLE_LST&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GRANT_REVOKE_PRIVILEGES_TABLES_LST&lt;/code&gt;. Later we will see that the generator will read the names in the list and only modify them. The database table specification is listed under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TABLES&lt;/code&gt;. Depending on which database you use, you may want to change the name of the datatype and the primary key. In our example, we are using &lt;strong&gt;Snowflake&lt;/strong&gt; database, so all the datatypes will be using the Snowflake datatypes.&lt;/p&gt;
+
+&lt;p&gt;Here is an example yaml file:&lt;/p&gt;
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# example.yaml&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;CREATETABLE_LST&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;TABLE2&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;GRANT_REVOKE_PRIVILEGES_TABLES_LST&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;TABLE1&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;TABLES&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;TABLE1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;SCHEMA&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PUBLIC&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;ROLEGRANTS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;USER1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;SELECT&quot;&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;INSERT&quot;&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;USER2&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;SELECT&quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;COLUMNS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;DATETIME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;NULLABLE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;DTYPE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TIMESTAMP&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;PRIMARY&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;PID&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;NULLABLE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;DTYPE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;BIGINT&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;PRIMARY&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+
+
+    &lt;span class=&quot;na&quot;&gt;TABLE2&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;SCHEMA&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PUBLIC&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;ROLEGRANTS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;USER1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;SELECT&quot;&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;INSERT&quot;&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;USER2&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;SELECT&quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;COLUMNS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;DATETIME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;NULLABLE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;DTYPE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TIMESTAMP&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;PRIMARY&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;VALUE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;NULLABLE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;DTYPE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;FLOAT&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;PRIMARY&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;template-sql&quot;&gt;Template SQL&lt;/h2&gt;
+&lt;p&gt;Given the database specification and parameters above, we need to provide a template. Since what we want to do is create a table and modify privileges, we need the sql commands such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CREATE TABLE&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GRANT &amp;lt;privilege&amp;gt; ON TABLE&lt;/code&gt;. As you can see below, we have those two commands wrapped around lines of code with percent signs(%) in the beginning of each line:&lt;/p&gt;
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;-- example.sql&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;-- create tables&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tablename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tabledata&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TABLES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tablename&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CREATETABLE_LST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EXISTS&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tabledata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;SCHEMA&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tablename&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columnname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;column&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tabledata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;COLUMNS&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()):&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columnname&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;column&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;DTYPE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columnname&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;column&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;DTYPE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endif&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endfor&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endif&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endfor&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;-- grant revoke privileges to schemas&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tablename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tabledata&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TABLES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tablename&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GRANT_REVOKE_PRIVILEGES_TABLES_LST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rolename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;privileges&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tabledata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;ROLEGRANTS&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;REVOKE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ALL&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PRIVILEGES&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tabledata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;SCHEMA&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tablename&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ROLE&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;${rolename}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;privilege&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;privileges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;GRANT&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;privilege&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tabledata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;SCHEMA&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tablename&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TO&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ROLE&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;${rolename}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endfor&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endfor&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endif&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endfor&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Notice that our template file contains both python and sql codes. Lines that start with a percent sign(%) are parsed by the Mako generator. The lines that do not contain the percent sign are the actual sql code that will be outputted to our resulting sql source code.&lt;/p&gt;
+
+&lt;h2 id=&quot;generator&quot;&gt;Generator&lt;/h2&gt;
+&lt;p&gt;Generator is the tool that reads the yaml file, parses the template file and generates the sql source code. As daunting as that may sound, it only takes a few lines of python to get it done:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;mako.template&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Template&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;yaml&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;templatefile&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;example.sql&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;datafile&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;example.yaml&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;templatefile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;r&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;yaml&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;safe_load&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;datafile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;r&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;generated-sql&quot;&gt;Generated SQL&lt;/h2&gt;
+&lt;p&gt;And we get our source code like this:&lt;/p&gt;
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EXISTS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PUBLIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLE2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;TIMESTAMP&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VALUE&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;FLOAT&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;-- grant revoke privileges to schemas&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;REVOKE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ALL&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PRIVILEGES&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PUBLIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLE1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ROLE&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;USER1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;GRANT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PUBLIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLE1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TO&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ROLE&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;USER1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;GRANT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PUBLIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLE1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TO&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ROLE&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;USER1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;REVOKE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ALL&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PRIVILEGES&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PUBLIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLE1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ROLE&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;USER2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;GRANT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PUBLIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLE1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TO&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ROLE&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;USER2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;You can try running the code locally by downloading the files at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_python/generator&lt;/code&gt; in my repository.&lt;/p&gt;
+
+&lt;p&gt;While the above sql code is very useful when modifying privileges for different roles, when we want to upload a file or copy data into tables, it will be slow since it will run each line sequentially.&lt;/p&gt;
+
+&lt;p&gt;There are way to make this faster by parallelizing it which I will discuss in the future!&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="database" /><category term="database" /><category term="mako" /><category term="sql" /><category term="mako" /><summary type="html">We often write redundant codes. I personally had to write a parser for different market data protocols. This is not only tedious but also error prone. One way to tackle this problem is to normalize all data into a single in-house protocol. However, if there is a new protocol that your in-house protocol does not support, then you need to redesign your protocol which could be a pain. Additionally, you need to know all the different protocols in order to implement a normalized protocol that takes all of them into account.</summary></entry><entry><title type="html">Snowflake and UDFTs</title><link href="http://localhost:4000/database/snowflake-udft/" rel="alternate" type="text/html" title="Snowflake and UDFTs" /><published>2022-11-25T00:00:00+09:00</published><updated>2022-11-25T00:00:00+09:00</updated><id>http://localhost:4000/database/snowflake-udft</id><content type="html" xml:base="http://localhost:4000/database/snowflake-udft/">&lt;p&gt;Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-defined table functions(UDFTs) in four different languages, of which python seemed the easiest to me. However, it turns out python UDFTs can be either stateless or stateful. This was different from the javascript UDFTs which seem to be stateful by default. So after spending hours on stackoverflow and documentation page, I found out that to enable stateful processing in python UDFTs, I need to specify the partition.&lt;/p&gt;
+
+&lt;p&gt;Here’s an example of a javascript UFDT which is stateful by default:&lt;/p&gt;
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;OR&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;REPLACE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FUNCTION&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LAG_BY_TIME_JS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ROW_TIME_1&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;CURRENT_VALUE_1&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RETURNS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_ROW_TIME_1&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_LAGGED_VALUE_1&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_LAGTIMES&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ARRAY&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;LANGUAGE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;javascript&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;$$&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;initialize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argumentInfo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[];&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;processRow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rowWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+            &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;rowtime_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ROW_TIME_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                &lt;span class=&quot;n&quot;&gt;value_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CURRENT_VALUE_1&lt;/span&gt;
+            &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;rowWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;writeRow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+            &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;_ROW_TIME_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ROW_TIME_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;_LAGGED_VALUE_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CURRENT_VALUE_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;_LAGTIMES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+            &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;$$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Here is a python UFDT:&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;OR&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;REPLACE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FUNCTION&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LAG_BY_TIME_PY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ROW_TIME&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;CURRENT_VALUE&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RETURNS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_ROW_TIME&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_LAGGED_VALUE&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_LAGTIMES&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ARRAY&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;LANGUAGE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;python&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;RUNTIME_VERSION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;PACKAGES&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;numpy&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;pandas&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;HANDLER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;LagByTime&apos;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;$$&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LagByTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rowtime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lagtimes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rowtime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,))&lt;/span&gt;
+        
+        &lt;span class=&quot;n&quot;&gt;yield&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        
+    &lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;end_partition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;$$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;While both UFDTs may look similar, they are different in that python UFDT can be either stateful or stateless. In our case, we wish to use stateful python UDFT. In order to do that, when using our function in snowflake sql, &lt;strong&gt;we need to specify the partition column&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;STOCK&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PRICE&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; 
+    &lt;span class=&quot;n&quot;&gt;MYTABLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+    &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;LAG_BY_TIME_PY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;to_epoch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;PRICE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OVER&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PARTITION&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;STOCK&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;STOCK&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;other-remarks&quot;&gt;Other Remarks&lt;/h1&gt;
+
+&lt;p&gt;We’ve recently started using snowflake to analyze our timeseries data. Having only used postgresql and mysql, it took some time for me to learn snowsql and the snowflake database. Here are some pros and cons:&lt;/p&gt;
+
+&lt;h2 id=&quot;1-snowflake-supports-nanosecond-precision&quot;&gt;:+1: snowflake supports nanosecond precision&lt;/h2&gt;
+&lt;p&gt;Unlike postgresql or mysql that only support microsecond precision, snowflake provides nanosecond precision for their &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TIMESTAMP&lt;/code&gt; datatypes. This is a major plus for us since most of our analysis work requires nanosecond precision.&lt;/p&gt;
+
+&lt;h2 id=&quot;1-snowflake-does-not-enforce-primary-key-constraint&quot;&gt;:+1: snowflake does NOT enforce primary key constraint&lt;/h2&gt;
+&lt;p&gt;This at first sounded like a bad idea until we realized that our data contained duplicate primary keys (we used timestamp as our primary key, even though we use nanosecond precision, there are instances where two events can occur at exactly the same time).&lt;/p&gt;
+
+&lt;h2 id=&quot;-1-snowflake-python-connector-is-slow&quot;&gt;:-1: Snowflake python connector is slow&lt;/h2&gt;
+&lt;p&gt;Snowflake provides a connector for python so that you can use your favorite python orms (e.g. sqlalchemy). However, my experience so far has not been great. Using snowflake connector made things at least 50% slower. It could be that converting the result to pandas dataframe takes time but for now, I’m sticking with sql on snowsql instead of python connectors.&lt;/p&gt;
+
+&lt;h2 id=&quot;-1-snowflakes-staging-and-copying-is-very-slow-with-python-connector&quot;&gt;:-1: Snowflake’s staging and copying is very slow (with python connector)&lt;/h2&gt;
+&lt;p&gt;When dealing with terabytes of data, we need fast upload and copy speed. This could be partly due to our physical distance to the datacenter (our datacenter is on the other side of the planet). However, compared to &lt;strong&gt;AWS&lt;/strong&gt;, snowflake’s uploading speed is abysmal. Additionally, once I uploaded a file to the stage, copying into the table has also been very slow. Both staging and copying were done via python connector so I may try it again with snowsql to see if it speed things up.&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="database" /><category term="database" /><category term="snowflake" /><category term="python" /><category term="javascript" /><summary type="html">Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-defined table functions(UDFTs) in four different languages, of which python seemed the easiest to me. However, it turns out python UDFTs can be either stateless or stateful. This was different from the javascript UDFTs which seem to be stateful by default. So after spending hours on stackoverflow and documentation page, I found out that to enable stateful processing in python UDFTs, I need to specify the partition.</summary></entry><entry><title type="html">mmap RAII</title><link href="http://localhost:4000/c++/mmap-raii/" rel="alternate" type="text/html" title="mmap RAII" /><published>2022-11-04T00:00:00+09:00</published><updated>2022-11-04T00:00:00+09:00</updated><id>http://localhost:4000/c++/mmap-raii</id><content type="html" xml:base="http://localhost:4000/c++/mmap-raii/">&lt;p&gt;There are many ways to share data between processes.&lt;/p&gt;
+
+&lt;p&gt;The most intuitive way is probably using a &lt;strong&gt;queue&lt;/strong&gt;. In fact, I’ve used queues like ZeroMq when establishing communication between processes. They are off the shelf queue library that supports pretty much all langauges that it is almost language agnostic. If you are a C++ programmer, you’ve probably have heard of moodycamel queues. These queues are also blazingly fast.&lt;/p&gt;
+
+&lt;p&gt;Another notable IPC method is &lt;strong&gt;shared memory&lt;/strong&gt;. Now there are lots of shared memory libraries and there are a few I’ve looked into: apache plasma shared memory and boost interprocess shared memory. The former is unfortunately deprecated since Arrow version 10.0.0 so that’s out the window. Boost interprocess shared memory gets the job done but working with boost library can be a hassle. So instea of using libraries, I’ve taken the time to write my own simple shared memory library.&lt;/p&gt;
+
+&lt;p&gt;Establishing a shared memory can be done by simply calling mmap and passing the mmap pointer to processes that need to commnicate:&lt;/p&gt;
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5096&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                       &lt;span class=&quot;c1&quot;&gt;// addr: if addr is NULL, then kernel chooses the (page aligned) address &lt;/span&gt;
+                                    &lt;span class=&quot;c1&quot;&gt;// at which to create the mapping&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                       &lt;span class=&quot;c1&quot;&gt;// length: number of bytes &lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;PROT_READ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_WRITE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// prot: pages may be read and written&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;MAP_SHARED&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_ANONYMOUS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// flags: share this mapping to other processes | mapping is not backed by any &lt;/span&gt;
+                                    &lt;span class=&quot;c1&quot;&gt;// file | don&apos;t let it be swapped out&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                         &lt;span class=&quot;c1&quot;&gt;// fd&lt;/span&gt;
+        &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;                           &lt;span class=&quot;c1&quot;&gt;// offset&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Note that we set &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MAP_ANONYMOUS&lt;/code&gt; flag so our shared memory will not be backed by any file. Later we will explore a file backed shared memory but for now this gets the job done. We have the shared memory pointer, but how do we pass it to other processes? Here we can simply pass it via &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fork&lt;/code&gt; call:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_procs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pid_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num_procs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_procs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fork&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;perror&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;fork, cleaning up...&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c_pid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kill&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_pid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SIGTERM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;munmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// child process&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;run_app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// wait for child processes to finish&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;munmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And we are done, but wait, what if we want to create more shared memories but as separate pointers? Then we can call &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mmap&lt;/code&gt; multiple times and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;munmap&lt;/code&gt; them accordingly. However, things get ugly very quickly - what happens if one of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mmap&lt;/code&gt; call fails? Then we need to make sure to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;munmap&lt;/code&gt; previously memory mapped pointers.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5096&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_READ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_WRITE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_SHARED&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_ANONYMOUS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_FAILED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;goto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_READ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_WRITE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_SHARED&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_ANONYMOUS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_FAILED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;goto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;munmap_ptr1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_READ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_WRITE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_SHARED&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_ANONYMOUS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_FAILED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;goto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;munmap_ptr2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// ....&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;munmap_ptr3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;munmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;munmap_ptr2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;munmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;munmap_ptr1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;munmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is classic C way of doing things and in fact, if we are working with kernel code, this is the cleanest way to handle it. However since we are using C++, there is a better way do handle it using RAII approach. Let us wrap the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mmap&lt;/code&gt; function in a class so that in the constructor, it calls the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mmap&lt;/code&gt; function and in the destructor, it calls &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;munmap&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// mmap_wrapper.h&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typename&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;protected:&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m_ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;public:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mmap_wrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;friend&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Mlock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;friend&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MmapHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// mmap_wrapper.inl&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typename&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;inline&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; 
+      &lt;span class=&quot;n&quot;&gt;m_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mmap_wrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_FAILED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MmapFailException&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;m_ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;static_cast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typename&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;inline&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;::~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m_ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_FAILED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// we want pid that mapped to unmap&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;munmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;static_cast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m_ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typename&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;inline&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mmap_wrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_READ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_WRITE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_SHARED&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAP_ANONYMOUS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And we are done! Now creating a shared memory can be done in a single line without having to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;munmap&lt;/code&gt; it ourselves:&lt;/p&gt;
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// POD data&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SharedData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;Mmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SharedData&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5096&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;SharedData&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sm_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m_ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can pass either the shared memory pointer itself or the reference to the data we actually want processes to read/write. Here we used the anonymous mapping and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fork&lt;/code&gt; system call to create shared memory ipc. Note that this is a bit restrictive - processes that are not children of the parent process cannot access the shared memory.&lt;/p&gt;
+
+&lt;p&gt;In the near future we will see how we can make this more scalable and modular!&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="c++" /><category term="mmap" /><category term="raii" /><category term="c++" /><summary type="html">There are many ways to share data between processes.</summary></entry><entry><title type="html">US Market Data (Part 2)</title><link href="http://localhost:4000/data/US-market-data-part2/" rel="alternate" type="text/html" title="US Market Data (Part 2)" /><published>2022-10-25T00:00:00+09:00</published><updated>2022-10-25T00:00:00+09:00</updated><id>http://localhost:4000/data/US-market-data-part2</id><content type="html" xml:base="http://localhost:4000/data/US-market-data-part2/">&lt;h1 id=&quot;us&quot;&gt;US&lt;/h1&gt;
+&lt;h2 id=&quot;bats-pitch-feed-handler&quot;&gt;Bats (PITCH Feed handler)&lt;/h2&gt;
+&lt;p&gt;Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channels during the trading hours. There are three types of feeds: Bats PITCH equities feed, Bats PITCH options feed, and Bats PITCH complex feed.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Bats PITCH equities feed supports &lt;strong&gt;BZX, BYZ, EDGA and EDGX&lt;/strong&gt; exchanges&lt;/li&gt;
+  &lt;li&gt;Bats PITCH options feed supports &lt;strong&gt;BZX, EDGX, C1, and C2&lt;/strong&gt; option exchanges.&lt;/li&gt;
+  &lt;li&gt;Bats PITCH complex feed supports the copmlex feed on &lt;strong&gt;EDGX, C1, and C2&lt;/strong&gt; option exchanges.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;xdp-feed-nyse-arca-amex-national-and-chicago-exchanges&quot;&gt;XDP feed (NYSE, ARCA, AMEX, National and Chicago exchanges)&lt;/h2&gt;
+&lt;p&gt;The XDP feed handlers support &lt;strong&gt;NYSE, NYSE Arca, NYSE National, and NYSE Chicago&lt;/strong&gt;. The feed publishes real-time full depth of book order and execution messages.&lt;/p&gt;
+
+&lt;h2 id=&quot;totalview-itch-feed-handler&quot;&gt;Totalview (ITCH Feed handler)&lt;/h2&gt;
+&lt;p&gt;The totalview feed handlers support &lt;strong&gt;Nasdaq ITCH(total view), PSX ITCH(total view psx) and BX ITCH (total view bx)&lt;/strong&gt;. The feed publisehs real-time full depth of book order and execution messages on primary and secondary UDP multicast channels durin gtrading hours. The Nasdaq Totalview feeds provide information on NYSE, NYSE MKT, NYSE ARCA, BATS and NASDAQ listed symbols.&lt;/p&gt;
+
+&lt;h2 id=&quot;iex-iex-feed-handler&quot;&gt;IEX (IEX feed handler)&lt;/h2&gt;
+&lt;p&gt;IEX exchange publishes real-time equities market data by the Investors Exchange(IEX)&lt;/p&gt;
+
+&lt;h2 id=&quot;cta-data---cqs-consolidated-quote-system-and-cts-consolidated-tape-system&quot;&gt;CTA Data - CQS (consolidated quote system) and CTS (consolidated tape system)&lt;/h2&gt;
+&lt;p&gt;Consolidated Tape Association (CTA) is reponsible disseminating level 1 trade and quote information in New York Stock Exchange (Tape A), NYSE Arca and NYSE Amex (Tape B). Unlisted Trading Privileges (UTP) plan is responsible for disseminating level 1 trade and quote information in Nasdaq (Tape C) listed securities traded on participating U.S. exchanges.
+CQS (consolidated quote system) publishes real-time top-of-the-book quotes on multicast channels during tradin ghours of the exchanges contributing to the CTS/CQS feed. CQS publishes following information:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;BBOQUOTE&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Feed Status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;LULD&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Market status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;NBBOQuote&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Product Status&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;CTS (consolidated tape system) publishes trade/execution messages on multicast channels during trading hours of the exchanges contributing to the CTS/CQS feed.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Auction summary&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Feed Status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Index Update&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;LULD&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Market Status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Product Statistics&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Product Status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Trade&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Trade break&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Trade correction&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;utp---uqdf-utp-qutation-data-feed-and-utdf-utp-trade-data-feed&quot;&gt;UTP - UQDF (UTP Qutation data feed) and UTDF (UTP Trade data feed)&lt;/h2&gt;
+&lt;p&gt;UTDF (UTP Trade data feed) contains&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Auction Summary&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Feed Status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Market Status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Product Statistics&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Trade&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Trade Break&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Trade Correction&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;UQDF (UTP Quote data feed) contains&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;BBQuote&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Feed Status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Market Status&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;NBBO Quote&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Product Status&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;More about CTA and UTP can be found &lt;a href=&quot;https://www.nyse.com/publicdocs/nyse/data/NYSE_Symbology_Spec_v1.0c.pdf&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;cboe-global-indices-feed-formerly-csmi&quot;&gt;Cboe Global Indices Feed (formerly CSMI)&lt;/h2&gt;
+&lt;p&gt;Cboe Global indices feed market data delivers real-time index values on over 400 products. Featured values from CBOE include SPX and the VIX spot, Standard &amp;amp; Poor’s / Down Jones, FTSE Russell, Ameribor, Gemini, Merrill Lynch, MIller Howard, MSCI, and Societe Generale.&lt;/p&gt;
+
+&lt;h2 id=&quot;ice-impact-intercontenental-exchange-ice&quot;&gt;ICE iMpact (Intercontenental Exchange (ICE))&lt;/h2&gt;
+&lt;p&gt;ICE iMpact feed handler publishes derivatives market data on the Intercontenental Exchange (ICE)’s iMpact multicast feed.&lt;/p&gt;
+
+&lt;h2 id=&quot;miax-equities-feed-handler&quot;&gt;MIAX Equities feed handler&lt;/h2&gt;
+&lt;p&gt;MIAX’s parent holding company, Miami International Holdings, Inc. (MIH), operates and manages Miami International Securities exchange, MIAX PEARL, MIAX Emerald, etc.&lt;/p&gt;
+
+&lt;h2 id=&quot;montreal-exchange-mx-feed-handler&quot;&gt;Montreal Exchange (MX) feed handler&lt;/h2&gt;
+&lt;p&gt;MX publish data via MX’s SOLA HSVF UDP Multicast feed.&lt;/p&gt;
+
+&lt;h2 id=&quot;otc-market&quot;&gt;OTC market&lt;/h2&gt;
+
+&lt;h1 id=&quot;europe&quot;&gt;Europe&lt;/h1&gt;
+&lt;h2 id=&quot;aquis-stock-exchange-aqse&quot;&gt;Aquis Stock Exchange (AQSE)&lt;/h2&gt;
+&lt;p&gt;Aquis operates an exchange for the trading of European equities. 
+It seems comparatively smaller than other exchanges.&lt;/p&gt;
+
+&lt;h2 id=&quot;eurex-and-xetra-eobienhanced-order-book-interface-handler&quot;&gt;Eurex and Xetra (EOBI(Enhanced Order book interface) handler)&lt;/h2&gt;
+&lt;p&gt;Eurex is owned by Deutsche Borse AG(German Bourse), Xetra is operated by the Frankfurt Stock Exchange, and its underlying trading technology was based on that of the Eurex exchange. Xetra data is used to calculate the DAX, the German share index.&lt;/p&gt;
+
+&lt;h1 id=&quot;asia&quot;&gt;Asia&lt;/h1&gt;
+
+&lt;h2 id=&quot;flex-full-feed-handler-japan&quot;&gt;FLEX Full feed handler (Japan)&lt;/h2&gt;
+&lt;p&gt;The FLEX Full feed pubish real time data which includes complete book market data from the Tokyo Stock Exchange (TSE), Sapporo Stock Exchange (SSE), Nagoya Stock Exchange (NSE), and the Fukuoka Stock Exchange (FSE). The TSE group is part of the larger Japan Exchange Group (JPX).&lt;/p&gt;
+
+&lt;h2 id=&quot;hkfe-hong-kong-futures-exchange-feed-handler&quot;&gt;HKFE (Hong Kong Futures Exchange feed handler)&lt;/h2&gt;
+
+&lt;h2 id=&quot;hong-kong-securities-exchange-hkse-feed-handler&quot;&gt;Hong Kong Securities Exchange (HKSE feed handler)&lt;/h2&gt;
+
+&lt;h2 id=&quot;taifex-feed-handler-taiwan&quot;&gt;TAIFEX feed handler (TAIWAN)&lt;/h2&gt;
+&lt;p&gt;TAIFEX publish real-time market data.&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="data" /><category term="data science" /><category term="data" /><category term="finance" /><summary type="html">US Bats (PITCH Feed handler) Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channels during the trading hours. There are three types of feeds: Bats PITCH equities feed, Bats PITCH options feed, and Bats PITCH complex feed. Bats PITCH equities feed supports BZX, BYZ, EDGA and EDGX exchanges Bats PITCH options feed supports BZX, EDGX, C1, and C2 option exchanges. Bats PITCH complex feed supports the copmlex feed on EDGX, C1, and C2 option exchanges.</summary></entry><entry><title type="html">US Market Data (Part 1)</title><link href="http://localhost:4000/data/US-market-data-part1/" rel="alternate" type="text/html" title="US Market Data (Part 1)" /><published>2022-10-01T00:00:00+09:00</published><updated>2022-10-01T00:00:00+09:00</updated><id>http://localhost:4000/data/US-market-data-part1</id><content type="html" xml:base="http://localhost:4000/data/US-market-data-part1/">&lt;p&gt;&lt;strong&gt;Terminlogies&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;L1: Level 1&lt;/li&gt;
+  &lt;li&gt;L2: Level 2&lt;/li&gt;
+  &lt;li&gt;L3: Level 3&lt;/li&gt;
+  &lt;li&gt;OLD: Order Level data&lt;/li&gt;
+  &lt;li&gt;LOB: Limit order book&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;unnormalized-market-data&quot;&gt;Unnormalized market data&lt;/h2&gt;
+&lt;p&gt;Unnormalized market data simply means that market data from different exchanges retain its original format. 
+For instance, Nadsaq may send trade data with the following format:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ____________________________
+|        |       |          |
+| ticker | price |  volume  |
+|________|_______|__________|
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;while NYSE sends trade data as:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; _________________________
+|        |        |       |
+| ticker | volume | price |
+|________|________|_______|
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;normalized-market-data&quot;&gt;Normalized market data&lt;/h2&gt;
+&lt;p&gt;Normalized data will take data from different exchanges and make sure all of them have the same format. 
+Using the above example, we can normalize the Nasdaq and NYSE data as follows:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; _________________________________________
+|        |       |          |             |
+| ticker | price |  volume  | exchange id |
+|________|_______|__________|_____________|
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;l1-data&quot;&gt;L1 Data&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;L1 data displays the best bid-offer-volume quotes&lt;/strong&gt;. This is often the national best bid and offer (NBBO). 
+If we want L1 data from, for instance, Nasdaq, then we can subscribe to their service called Nasdaq Basic which consolidates and distributes best bid and offer (BBO) from all Nasdaq exchanges. 
+If we want the national best bid and best offer (NBBO), then we can subscribe to the SIPs which will consolidate and distribute L1 data from all exchanges. 
+Note that since SIPs need to consolidate from all exchanges as opposed to Nasdaq Basic which consolidates from Nasdaq exchanges only, there will be some discrepancy in latency.&lt;/p&gt;
+
+&lt;h2 id=&quot;l2-and-l3-data&quot;&gt;L2 and L3 Data&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;L2 and L3 data displays multiple bid-offer-volume prices&lt;/strong&gt;. 
+This could be the top 5 best bid-offer-volume to full bid-offer-volume.
+Unlike L1 data, each exchange distributes its own L2/L3 data, therefore, if we need a consolidated L2/L3 data, we need to subscribe to all exchanges and do the conslidation and normalization ourself. 
+There are third party vendors (ICE, etc) that provide both normalized and unnormalized consolidated L2/L3 data.&lt;/p&gt;
+
+&lt;h2 id=&quot;order-level-data-old&quot;&gt;Order Level Data (OLD)&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Order level data contains every order messages - add order, cancel order, modify order, replace order - that can be used to construct a full depth orderbook and more&lt;/strong&gt;.
+Similar to L2/L3 data, individual exchanges distribute its own order level data and if we wish to construct a consolidated orderbook, we need to get feed from all exchanges. Note that unlike L2/L3 data, not all exchanges have order level data. The big exchanges (e.g. Nasdaq, NYSE) provide order level data (e.g. totalview, openbook ultra)
+There are third party vendors (e.g. Maystreet, Refinitiv, etc) that provide both normalized and unnormalized consolidated order level data.&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="data" /><category term="order level data" /><category term="L1 data" /><category term="L2 data" /><category term="L3 data" /><category term="limit order book" /><summary type="html">Terminlogies: L1: Level 1 L2: Level 2 L3: Level 3 OLD: Order Level data LOB: Limit order book</summary></entry><entry><title type="html">Unique security Identifiers</title><link href="http://localhost:4000/finance/unique-security-identifier/" rel="alternate" type="text/html" title="Unique security Identifiers" /><published>2022-09-16T00:00:00+09:00</published><updated>2022-09-16T00:00:00+09:00</updated><id>http://localhost:4000/finance/unique-security-identifier</id><content type="html" xml:base="http://localhost:4000/finance/unique-security-identifier/">&lt;p&gt;&lt;strong&gt;Terminologies:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;ISIN: international securities identification number&lt;/li&gt;
+  &lt;li&gt;CUSIP: Committee on Uniform Security Identification Procedures&lt;/li&gt;
+  &lt;li&gt;SEDOL: Stock Exchange Daily Official List&lt;/li&gt;
+  &lt;li&gt;RIC: Reuters Instrument Code&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are many ways to uniquely identify a security but most will use ISIN (since it’s an expansion of SEDOL and CUSIP, which we will discuss more in this post). Here we list a few well known identifiers:&lt;/p&gt;
+
+&lt;h2 id=&quot;ticker&quot;&gt;Ticker&lt;/h2&gt;
+&lt;p&gt;The most naive way to identify a security is by the ticker symbol – this is used to identify publicly traded shares of a particular stock on a given exchange.&lt;br /&gt;
+Most won’t use the ticker symbol since it doesn’t contain any information on where it is traded and what type of security it is. For instance, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AAPL&lt;/code&gt; doesn’t tell us whether we are referring to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AAPL&lt;/code&gt; that is being traded in the U.S. or U.K. Additionally, we don’t know if we are referring to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AAPL&lt;/code&gt; stock or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AAPL&lt;/code&gt; bond.&lt;/p&gt;
+
+&lt;h2 id=&quot;ric&quot;&gt;RIC&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Reuters instrument code&lt;/strong&gt; used in Refinitiv services to identify companies. Only Refinitiv products use it and no one else, but since Refinitiv is such a huge data service provider, you’ll probably uses it at some point if you’re in finance.&lt;/p&gt;
+
+&lt;h2 id=&quot;sedol&quot;&gt;SEDOL&lt;/h2&gt;
+&lt;p&gt;SEDOL stands for &lt;strong&gt;Stock Exchange Daily Official List&lt;/strong&gt; – they are 7 characters in length, a 6 place alphanumeric code and a trailing check digit. 
+These numbers are used to identify securities by the &lt;strong&gt;London Stock Exchange&lt;/strong&gt;. 
+SEDOLs serve as the &lt;strong&gt;National Securities Identifying Number&lt;/strong&gt; for all securities in the U.K. therefore it is part of security’s ISIN as well.&lt;/p&gt;
+
+&lt;h2 id=&quot;cusip&quot;&gt;CUSIP&lt;/h2&gt;
+&lt;p&gt;Similarly, CUSIP stands for &lt;strong&gt;Committee on Uniform Security Identification Procedures&lt;/strong&gt; and contains 6, 8 or 9 digit alphanumeric code which identifies a North American equity. 
+They are created by the American Banking Association and are operated by S&amp;amp;P Capital IQ.
+Since CUSIPs are unique identifiers for U.S. securities, they are used as part of security’s ISIN as well.&lt;/p&gt;
+
+&lt;h2 id=&quot;isin&quot;&gt;ISIN&lt;/h2&gt;
+&lt;p&gt;ISIN stands for &lt;strong&gt;international securities identification number&lt;/strong&gt; and it is a &lt;strong&gt;12-digit alphanumeric code that uniquely identifies a specific security globally&lt;/strong&gt;.
+There are three parts to ISIN: (i) country code, (ii) numbers, and (iii) checksum. 
+For securities in U.K., the number would be SEDOL while for U.S. securities, it is CUSIP.&lt;/p&gt;
+
+&lt;p&gt;Here’s a simple diagram on how ISIN is generated from CUSIP:&lt;/p&gt;
+
+&lt;figure&gt;
+  &lt;img src=&quot;/assets/images/cusip-to-isin.png&quot; style=&quot;width:100%;height: auto&quot; /&gt;
+  &lt;figcaption&gt;source (https://heald.ca/converting-cusip-6-cusip-8-and-cusip-9-to-isin-in-php/)&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Most financial data providers, e.g. Thomson Reuters, Bloomberg, BvD, usually include an ISIN number.&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="finance" /><category term="isin" /><category term="cusip" /><category term="ticker symbol" /><category term="ric" /><category term="finance" /><summary type="html">Terminologies: ISIN: international securities identification number CUSIP: Committee on Uniform Security Identification Procedures SEDOL: Stock Exchange Daily Official List RIC: Reuters Instrument Code</summary></entry><entry><title type="html">SIP (CTA and UTP Plan)</title><link href="http://localhost:4000/finance/sip-cta-utp/" rel="alternate" type="text/html" title="SIP (CTA and UTP Plan)" /><published>2022-09-04T00:00:00+09:00</published><updated>2022-09-04T00:00:00+09:00</updated><id>http://localhost:4000/finance/sip-cta-utp</id><content type="html" xml:base="http://localhost:4000/finance/sip-cta-utp/">&lt;p&gt;Terminologies:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;CTA: Consolidated Tape Association&lt;/li&gt;
+  &lt;li&gt;UTP: Unlisted Trading Privileges&lt;/li&gt;
+  &lt;li&gt;CTS: Consolidated Tape System&lt;/li&gt;
+  &lt;li&gt;CQS: Consolidated Quote System&lt;/li&gt;
+  &lt;li&gt;UTDF: UTP Trade Data Feed&lt;/li&gt;
+  &lt;li&gt;UQDF: UTP Quote Data Feed&lt;/li&gt;
+  &lt;li&gt;Tape A: NYSE listed securities&lt;/li&gt;
+  &lt;li&gt;Tape B: NYSE Arca and Amex listed securities&lt;/li&gt;
+  &lt;li&gt;Tape C: Nasdaq listed securities&lt;/li&gt;
+  &lt;li&gt;FINRA: Financial industry regulatory authority&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;tl;dr&lt;/strong&gt; CTA distributes trade(CTS) and quote(CQS) messages for tape A (i.e. NYSE listed securities) and tape B (i.e. NYSE Arca and Amex). UTP distributes trade(UTDF) and quote(UQDF) messages for tape C (i.e. Nasdaq listed securities)&lt;/p&gt;
+
+&lt;p&gt;When I first entered finance, one of the few jargons that confused me was SIP, then came CTA and UTP. These acronyms are thrown around by those who work in finance all the time and while I kind of knew what they were, I never dug deep into them until recently. Here is all you need to know about them:&lt;/p&gt;
+
+&lt;h2 id=&quot;cta-consolidated-tape-association&quot;&gt;CTA (Consolidated Tape Association)&lt;/h2&gt;
+&lt;p&gt;When someone says CTA, they are referring to the &lt;strong&gt;association&lt;/strong&gt; that oversees the consolidation and distribution of NYSE listed securities (Tape A) and NYSE Arca &amp;amp; Amex listed securities (Tape B).&lt;/p&gt;
+
+&lt;h2 id=&quot;utp-unlisted-trading-privileges-plan&quot;&gt;UTP (Unlisted Trading Privileges) Plan&lt;/h2&gt;
+&lt;p&gt;Similary, when someone says UTP, they are referring to the &lt;strong&gt;association&lt;/strong&gt; that oversees the consolidation and distribution of Nasdaq listed securities (Tape C).&lt;/p&gt;
+
+&lt;h2 id=&quot;cts-consolidated-tape-system-and-cqs-consolidated-quote-system&quot;&gt;CTS (Consolidated Tape System) and CQS (Consolidated Quote System)&lt;/h2&gt;
+&lt;p&gt;CTS and CQS are data feed provided by the CTA.
+CTS consolidates and distributes Tape A and Tape B trades.
+CQS consolidates and distributes Tape A and Tape B quotes.&lt;/p&gt;
+
+&lt;h2 id=&quot;utdf-utp-trade-data-feed-and-uqdfutp-quote-data-feed&quot;&gt;UTDF (UTP trade data feed) and UQDF(UTP quote data feed)&lt;/h2&gt;
+&lt;p&gt;UTDF and UQDF are data feed provided by the UTP Plan. 
+UTDF consolidates and distributes Tape C trades.
+UQDF consolidates and distributes Tape C quotes.&lt;/p&gt;
+
+&lt;h1 id=&quot;sip-securities-information-processor&quot;&gt;SIP (securities information processor)&lt;/h1&gt;
+&lt;p&gt;SIP refers to any system that consolidates and distributes market data to public. In the U.S., there are two sips: CTA and UTP Plan.&lt;/p&gt;
+
+&lt;p&gt;In addition to trades and quotes, both SIPs provide additional data which include&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;National best bid and offer (NBBO)&lt;/li&gt;
+  &lt;li&gt;Limit up and down (LULD) price bands&lt;/li&gt;
+  &lt;li&gt;Trading halts&lt;/li&gt;
+  &lt;li&gt;IPOs&lt;/li&gt;
+  &lt;li&gt;Financial status&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Here’s a nice image from &lt;a href=&quot;https://polygon.io/blog/understanding-the-sips/&quot;&gt;Peter Stacho&lt;/a&gt;:&lt;/p&gt;
+
+&lt;figure&gt;
+  &lt;img src=&quot;/assets/images/sip.jpeg&quot; style=&quot;width:120%;height: auto&quot; /&gt;
+  &lt;figcaption&gt;source (https://polygon.io/blog/understanding-the-sips/)&lt;/figcaption&gt;
+&lt;/figure&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="finance" /><category term="finance" /><category term="CTA" /><category term="UTP" /><category term="SIP" /><category term="CTS" /><category term="CQS" /><category term="UTDF" /><category term="UQDF" /><summary type="html">Terminologies: CTA: Consolidated Tape Association UTP: Unlisted Trading Privileges CTS: Consolidated Tape System CQS: Consolidated Quote System UTDF: UTP Trade Data Feed UQDF: UTP Quote Data Feed Tape A: NYSE listed securities Tape B: NYSE Arca and Amex listed securities Tape C: Nasdaq listed securities FINRA: Financial industry regulatory authority</summary></entry><entry><title type="html">Sum of Cauchy sequence is not Cauchy</title><link href="http://localhost:4000/math/sum-of-cauchy-not-cauchy/" rel="alternate" type="text/html" title="Sum of Cauchy sequence is not Cauchy" /><published>2022-03-14T00:00:00+09:00</published><updated>2022-03-14T00:00:00+09:00</updated><id>http://localhost:4000/math/sum-of-cauchy-not-cauchy</id><content type="html" xml:base="http://localhost:4000/math/sum-of-cauchy-not-cauchy/">&lt;p&gt;Today I was asked whether sum of two convergent sequences converges. This can be trivial if we are dealing with $\mathbb{R}$ using $|\cdot|$ as our metric. But can we say this for every metric function? It turns out, that’s not the case, and here we provide a counterexample.&lt;/p&gt;
+
+&lt;h2 id=&quot;proof&quot;&gt;Proof&lt;/h2&gt;
+&lt;p&gt;To show that sum of Cauchy sequences is not Cauchy, we need a counterexample. The most frequently used counterexample uses the following metric function:&lt;/p&gt;
+
+\[d(x,y) = | \arctan(x) - \arctan(y)|\]
+
+&lt;p&gt;This is clearly a metric (i.e. it satisfies nonnegativity, symmetry, and triangle inequality).&lt;/p&gt;
+
+&lt;p&gt;Now let us define two sequences: $a_n = n$ and $b_n = (-1)^n + n$. We can clearly see that $a_n + b_n = (-1)^n$ does not convege. So if we show that $a_n = n$ and $b_n = (-1)^n + n$ converge, then we are done.&lt;/p&gt;
+
+&lt;h4 id=&quot;step-1-a_n--n-converges&quot;&gt;Step 1: $a_n = n$ converges&lt;/h4&gt;
+&lt;p&gt;Notice that $\arctan(n)$ is an increasing sequence and $|\arctan(n)| &amp;lt; \pi/2$, i.e., bounded. This implies that the sequence $\arctan(n)$ is a bounded monotone sequence. Hence, by the monotone convergence theorem for real sequences, it converges to some point (and this point is in fact $\pi /2$). Since every convergent sequence is a Cauchy sequence, $a_n$ is a Cauchy sequence.&lt;/p&gt;
+
+&lt;h4 id=&quot;step-2-b_n---1n--n-converges&quot;&gt;Step 2: $b_n = (-1)^n + n$ converges&lt;/h4&gt;
+&lt;p&gt;Unlike $\arctan(a_n)$, $\arctan((-1)^n + n)$ is not an increasing sequence. However, we see that $b_{2n-1}$ and $b_{2n}$ are increasing sequences, and by the same logic as above, they both converge and are Cauchy sequences. Then for any arbitrary $\epsilon$, there exists $N_{1, \epsilon}$ and $N_{2, \epsilon}$ such that&lt;/p&gt;
+
+\[|b_{2n-1} - b| &amp;lt; \epsilon \quad \text{for } n \ge N_{1, \epsilon}\\|b_{2n} - b| &amp;lt; \epsilon \quad \text{for } n \ge N_{2, \epsilon}.\]
+
+&lt;p&gt;Then we see that for $n \ge \max(2N_{1, \epsilon} - 1, 2 N_{2, \epsilon})$, we get&lt;/p&gt;
+
+\[|b_n - b| &amp;lt; \epsilon.\]
+
+&lt;p&gt;Therefore, $b_n$ is a Cauchy sequence. Since we know that $b_n$ has subsequences that converge (by lemma 1), it also converges. $\blacksquare$&lt;/p&gt;
+
+&lt;h4 id=&quot;lemma-1-cauchy-sequence-is-convergent-if-and-only-if-it-has-a-convergent-subsequence&quot;&gt;Lemma 1: Cauchy sequence is convergent if and only if it has a convergent subsequence&lt;/h4&gt;
+
+&lt;p&gt;($\Rightarrow$):&lt;/p&gt;
+
+&lt;p&gt;(Trivial) If Cauchy sequence is convergent, then all of its subsequence must converge to the same limit point.&lt;/p&gt;
+
+&lt;p&gt;($\Leftarrow$):&lt;/p&gt;
+
+&lt;p&gt;Suppose that $x_{n_k}$ is a subsequence of $x_n$ that converges to $x$. Then for some arbitrary $\epsilon &amp;gt; 0$ there exists $N$ such that for all $n, m &amp;gt; N$, $d(x_n, x_m) &amp;lt; \epsilon / 2$. Then for any $n &amp;gt; N$ and $n_k &amp;gt; n &amp;gt; N$, we have:&lt;/p&gt;
+
+\[d(x_n, x) \le d(x_n, x_{n_k}) + d(x_{n_k}, x)\]
+
+&lt;p&gt;The first term on the right is clearly less than $\epsilon$ since $x_n$ is a Cauchy sequence. The second term on the right is also less then $\epsilon$ because the subsequence converges to $x$. Therefore we get&lt;/p&gt;
+
+\[d(x_n, x) \le d(x_n, x_{n_k}) + d(x_{n_k}, x) &amp;lt; \epsilon\]
+
+&lt;p&gt;Therefore, $x_n$ converges to $x$.&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="math" /><category term="Cauchy Sequence" /><category term="Convergence" /><category term="Monotone Convergence Theorem for sequences" /><summary type="html">Today I was asked whether sum of two convergent sequences converges. This can be trivial if we are dealing with $\mathbb{R}$ using $|\cdot|$ as our metric. But can we say this for every metric function? It turns out, that’s not the case, and here we provide a counterexample.</summary></entry><entry><title type="html">on- and off-policy? online and offline reinforcement learning?</title><link href="http://localhost:4000/machine-learning/on-off-online-offline-rl/" rel="alternate" type="text/html" title="on- and off-policy? online and offline reinforcement learning?" /><published>2022-01-13T00:00:00+09:00</published><updated>2022-01-13T00:00:00+09:00</updated><id>http://localhost:4000/machine-learning/on-off-online-offline-rl</id><content type="html" xml:base="http://localhost:4000/machine-learning/on-off-online-offline-rl/">&lt;p&gt;For those who are first learning reinforcement learning, the term on-policy and off-policy (and offline learning) can be quite daunting (and mostly annoying). Here we outline what they mean, how they are different, and how conceptually simple they are.&lt;/p&gt;
+
+&lt;h2 id=&quot;on-policy&quot;&gt;On-policy&lt;/h2&gt;
+
+&lt;p&gt;The term on-policy, at least to me, seems to be created simply due to the fact that policy gradient theorem relies on the gradient of the current policy. More specifically, let the reward function be defined as&lt;/p&gt;
+
+\[J(\theta) = \sum_{s \in \mathcal{S}} d_{\pi_\theta}(s) V^{\pi_\theta}(s) = \sum_{s \in \mathcal{S}} d_{\pi_\theta}(s) \sum_{a \in \mathcal{A}} \pi_\theta(a \mid s) Q^{\pi_\theta}(s,a) \tag{1}\]
+
+&lt;p&gt;where $d_{\pi}(s)$ is the stationary distribution of Markov chain for $\pi$. The gradient $\nabla_\theta J(\theta)$ is difficult to compute since both $d_{\pi_\theta}$ and $\pi_\theta$ are dependent on $\theta$. The key idea of policy gradient is that there is a way to reformulate the derivative of $\nabla_\theta J(\theta)$ such that we do not have to solve $\nabla_\theta d_{\pi_\theta}$ and get the following gradient:&lt;/p&gt;
+
+\[\begin{align*}\nabla_\theta J(\theta) &amp;amp;= \nabla_\theta \sum_{s \in \mathcal{S}} d_{\pi_\theta}(s) \sum_{a \in \mathcal{A}} Q^{\pi_\theta}(s,a) \pi_\theta(a \mid s)\\&amp;amp;\propto \sum_{s \in \mathcal{S}} d_{\pi_\theta}(s) \sum_{a \in \mathcal{A}} Q^{\pi_\theta}(s,a) \nabla_\theta \pi_\theta(a \mid s)\end{align*} \tag{2}\]
+
+&lt;p&gt;If you listen to someone working on reinforcement learning, you often hear them say on-policy reinforcement learning is not data efficient. Again, this is due to the fact that policy gradient requires the gradient of the current policy (observing the equation above, one can easily see that the gradient $\nabla_\theta J(\theta)$ is a function of $\pi_\theta$). Once we update the policy, we can’t use the same policy for our next update. That’s why on every update, we throw away the collected dataset and collect a new one from our newly updated policy.&lt;/p&gt;
+
+&lt;h2 id=&quot;off-policy&quot;&gt;Off-policy&lt;/h2&gt;
+
+&lt;p&gt;If we use trajectories from both current policy and past policies, then it’s called off-policy. Technically, it should be called “on- and off-policy” since we are using both current policy data and past policy data. But that’s too long to write so we just say off-policy.&lt;/p&gt;
+
+&lt;h2 id=&quot;offline&quot;&gt;Offline&lt;/h2&gt;
+
+&lt;p&gt;Offline is a newly introduced terminology in the reinforcement learning literature. It literally just means we have a set of collected trajectories that we can use to train our agent but we don’t have a simulator to create more trajectories.&lt;/p&gt;
+
+&lt;h2 id=&quot;online&quot;&gt;Online&lt;/h2&gt;
+
+&lt;p&gt;If you have a simulator where your agent can try all possible actions, it is online.&lt;/p&gt;
+
+&lt;p&gt;(&lt;strong&gt;Remark&lt;/strong&gt;: No one really says online reinforcement learning since we always assume that there is a simulator but with the advent of offline reinforcement learning, some people have started to use the term online to make it clear to their readers that it is not offline).&lt;/p&gt;
+
+&lt;h2 id=&quot;onlineoffline-perp-on-policyoff-policy&quot;&gt;Online/Offline $\perp$ On-policy/Off-policy&lt;/h2&gt;
+
+&lt;p&gt;Online/offline and on-policy/off-policy are orthogonal concepts. So you can have a reinforcement learning algorithm that is “online off-policy” or “offline on-policy.”&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="machine-learning" /><category term="reinforcement learning" /><category term="on-policy" /><category term="off-poliyc" /><category term="online reinforcement learning" /><category term="offline reinforcement learning" /><summary type="html">For those who are first learning reinforcement learning, the term on-policy and off-policy (and offline learning) can be quite daunting (and mostly annoying). Here we outline what they mean, how they are different, and how conceptually simple they are.</summary></entry><entry><title type="html">What is a “small” set - measure theoretic and topological approach</title><link href="http://localhost:4000/math/small-set-two-approaches/" rel="alternate" type="text/html" title="What is a “small” set - measure theoretic and topological approach" /><published>2022-01-13T00:00:00+09:00</published><updated>2022-01-13T00:00:00+09:00</updated><id>http://localhost:4000/math/small-set-two-approaches</id><content type="html" xml:base="http://localhost:4000/math/small-set-two-approaches/">&lt;p&gt;The notion of “smallness” in measure theory is pretty clear - when the set has measure $0$, then we can treat is as a small set, or a set with no mass. This is intuitive if we use a Lebesgue measure, but for other measures or distributions, this is not always the case. Take the Gaussian distribution for instance. The standard Gaussian distribution has almost no mass in $[c, \infty)$  for some sufficiently large $c$. However, if we use Lebesgue measure, it has infinite mass. So the idea of “smallness” is dependent on the measure we are using. A more dramatic example is the dirac delta measure. It has a point mass at 0 and the rest has measure 0. Is there a more general way to define “smallness” without dependence on any specific measure?&lt;/p&gt;
+
+&lt;figure&gt;
+  &lt;img src=&quot;/assets/images/measure_dependent_smallness.png&quot; /&gt;
+  &lt;figcaption&gt;Notion of smallness depends on the measure we are using!&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;I introduce you Baire Category theorem - a topological way to define the notion of “smallness” of a set:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A set $E \subset X$ is of the &lt;strong&gt;first category&lt;/strong&gt; in $X$ if $E$ is a countable union of nowhere dense sets in $X$. A set of the first category is sometimes said to be “meager.” A set $E$ that is not of the first category in $X$ is referred to as being of the &lt;strong&gt;second category&lt;/strong&gt; in $X$.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;A set $E \subset X$ is defined to be &lt;strong&gt;generic&lt;/strong&gt; if its complement is of the first category.&lt;/p&gt;
+&lt;blockquote&gt;
+
+&lt;/blockquote&gt;
+
+&lt;p&gt;Even though both measure function and Baire category theorem define the notion of smallness of a set, they do not imply each other. In fact, there is no link between the two. As Stein and Shakarchi says in their functional analysis book:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In general relying on one’s intuition about the category of sets requires a little caution. For instance, there is no link between this notion and that of Lebesgue measure. Indeed, there are sets in $[0, 1]$ of the first category that are of full measure, and hence uncountable and dense. By the same token, there are generic sets of measure zero.&lt;/p&gt;
+
+&lt;/blockquote&gt;
+
+&lt;p&gt;Here’s a nice illustration from &lt;a href=&quot;https://www.math3ma.com/blog/two-ways-to-be-small&quot;&gt;one of my favorite math blogs&lt;/a&gt;:&lt;/p&gt;
+
+&lt;figure&gt;
+  &lt;img src=&quot;/assets/images/dense_nowhere_dense.png&quot; style=&quot;width:60%;height: auto&quot; /&gt;
+  &lt;figcaption&gt;From Tai-Danae Bradley’s Math3ma blog (https://www.math3ma.com/)&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;A fat cantor set is an example of a nowhere dense set (i.e. first category) that has a positive measure.&lt;/p&gt;</content><author><name>Jae Won Choi</name><email>uhbuba.collector@gmail.com</email></author><category term="math" /><category term="measure theory" /><category term="topology" /><category term="Baire category theorem" /><summary type="html">The notion of “smallness” in measure theory is pretty clear - when the set has measure $0$, then we can treat is as a small set, or a set with no mass. This is intuitive if we use a Lebesgue measure, but for other measures or distributions, this is not always the case. Take the Gaussian distribution for instance. The standard Gaussian distribution has almost no mass in $[c, \infty)$ for some sufficiently large $c$. However, if we use Lebesgue measure, it has infinite mass. So the idea of “smallness” is dependent on the measure we are using. A more dramatic example is the dirac delta measure. It has a point mass at 0 and the rest has measure 0. Is there a more general way to define “smallness” without dependence on any specific measure?</summary></entry></feed>

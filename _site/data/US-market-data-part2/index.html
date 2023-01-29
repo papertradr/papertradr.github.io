@@ -1,0 +1,772 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>US Market Data (Part 2) - Slow is smooth, smooth is fast</title>
+<meta name="description" content="US Bats (PITCH Feed handler) Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channels during the trading hours. There are three types of feeds: Bats PITCH equities feed, Bats PITCH options feed, and Bats PITCH complex feed.    Bats PITCH equities feed supports BZX, BYZ, EDGA and EDGX exchanges   Bats PITCH options feed supports BZX, EDGX, C1, and C2 option exchanges.   Bats PITCH complex feed supports the copmlex feed on EDGX, C1, and C2 option exchanges.">
+
+
+  <meta name="author" content="Jae Won Choi">
+  
+  <meta property="article:author" content="Jae Won Choi">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Slow is smooth, smooth is fast">
+<meta property="og:title" content="US Market Data (Part 2)">
+<meta property="og:url" content="http://localhost:4000/data/US-market-data-part2/">
+
+
+  <meta property="og:description" content="US Bats (PITCH Feed handler) Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channels during the trading hours. There are three types of feeds: Bats PITCH equities feed, Bats PITCH options feed, and Bats PITCH complex feed.    Bats PITCH equities feed supports BZX, BYZ, EDGA and EDGX exchanges   Bats PITCH options feed supports BZX, EDGX, C1, and C2 option exchanges.   Bats PITCH complex feed supports the copmlex feed on EDGX, C1, and C2 option exchanges.">
+
+
+
+
+
+  <meta name="twitter:site" content="@uhbubaboi">
+  <meta name="twitter:title" content="US Market Data (Part 2)">
+  <meta name="twitter:description" content="US Bats (PITCH Feed handler) Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channels during the trading hours. There are three types of feeds: Bats PITCH equities feed, Bats PITCH options feed, and Bats PITCH complex feed.    Bats PITCH equities feed supports BZX, BYZ, EDGA and EDGX exchanges   Bats PITCH options feed supports BZX, EDGX, C1, and C2 option exchanges.   Bats PITCH complex feed supports the copmlex feed on EDGX, C1, and C2 option exchanges.">
+  <meta name="twitter:url" content="http://localhost:4000/data/US-market-data-part2/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2022-10-25T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/data/US-market-data-part2/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Jae Won Choi",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Slow is smooth, smooth is fast Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+    
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Slow is smooth, smooth is fast
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/links/" title="useful links">links</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/" title="me">about</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/uhbubaboi.jpg" alt="Jae Won Choi" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Jae Won Choi</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>ex-Ph.D., data scientist, software/systems engineer</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://twitter.com/uhbubaboi" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/papertradr" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/jae-won-choi-746003232/" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">Linkedin</span></a></li>
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:uhbuba.collector@gmail.com" rel="me" class="u-email">
+            <meta itemprop="email" content="uhbuba.collector@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span>
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="US Market Data (Part 2)">
+    <meta itemprop="description" content="USBats (PITCH Feed handler)Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channels during the trading hours. There are three types of feeds: Bats PITCH equities feed, Bats PITCH options feed, and Bats PITCH complex feed.  Bats PITCH equities feed supports BZX, BYZ, EDGA and EDGX exchanges  Bats PITCH options feed supports BZX, EDGX, C1, and C2 option exchanges.  Bats PITCH complex feed supports the copmlex feed on EDGX, C1, and C2 option exchanges.">
+    <meta itemprop="datePublished" content="2022-10-25T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/data/US-market-data-part2/" class="u-url" itemprop="url">US Market Data (Part 2)
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-10-25T00:00:00+09:00">October 25, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <h1 id="us">US</h1>
+<h2 id="bats-pitch-feed-handler">Bats (PITCH Feed handler)</h2>
+<p>Bats PITCH feeds publish real-time full depth-of-book order and execution messages on primary and secondary UDP multicast channels during the trading hours. There are three types of feeds: Bats PITCH equities feed, Bats PITCH options feed, and Bats PITCH complex feed.</p>
+<ul>
+  <li>Bats PITCH equities feed supports <strong>BZX, BYZ, EDGA and EDGX</strong> exchanges</li>
+  <li>Bats PITCH options feed supports <strong>BZX, EDGX, C1, and C2</strong> option exchanges.</li>
+  <li>Bats PITCH complex feed supports the copmlex feed on <strong>EDGX, C1, and C2</strong> option exchanges.</li>
+</ul>
+
+<h2 id="xdp-feed-nyse-arca-amex-national-and-chicago-exchanges">XDP feed (NYSE, ARCA, AMEX, National and Chicago exchanges)</h2>
+<p>The XDP feed handlers support <strong>NYSE, NYSE Arca, NYSE National, and NYSE Chicago</strong>. The feed publishes real-time full depth of book order and execution messages.</p>
+
+<h2 id="totalview-itch-feed-handler">Totalview (ITCH Feed handler)</h2>
+<p>The totalview feed handlers support <strong>Nasdaq ITCH(total view), PSX ITCH(total view psx) and BX ITCH (total view bx)</strong>. The feed publisehs real-time full depth of book order and execution messages on primary and secondary UDP multicast channels durin gtrading hours. The Nasdaq Totalview feeds provide information on NYSE, NYSE MKT, NYSE ARCA, BATS and NASDAQ listed symbols.</p>
+
+<h2 id="iex-iex-feed-handler">IEX (IEX feed handler)</h2>
+<p>IEX exchange publishes real-time equities market data by the Investors Exchange(IEX)</p>
+
+<h2 id="cta-data---cqs-consolidated-quote-system-and-cts-consolidated-tape-system">CTA Data - CQS (consolidated quote system) and CTS (consolidated tape system)</h2>
+<p>Consolidated Tape Association (CTA) is reponsible disseminating level 1 trade and quote information in New York Stock Exchange (Tape A), NYSE Arca and NYSE Amex (Tape B). Unlisted Trading Privileges (UTP) plan is responsible for disseminating level 1 trade and quote information in Nasdaq (Tape C) listed securities traded on participating U.S. exchanges.
+CQS (consolidated quote system) publishes real-time top-of-the-book quotes on multicast channels during tradin ghours of the exchanges contributing to the CTS/CQS feed. CQS publishes following information:</p>
+<ul>
+  <li><strong>BBOQUOTE</strong></li>
+  <li><strong>Feed Status</strong></li>
+  <li><strong>LULD</strong></li>
+  <li><strong>Market status</strong></li>
+  <li><strong>NBBOQuote</strong></li>
+  <li><strong>Product Status</strong></li>
+</ul>
+
+<p>CTS (consolidated tape system) publishes trade/execution messages on multicast channels during trading hours of the exchanges contributing to the CTS/CQS feed.</p>
+<ul>
+  <li><strong>Auction summary</strong></li>
+  <li><strong>Feed Status</strong></li>
+  <li><strong>Index Update</strong></li>
+  <li><strong>LULD</strong></li>
+  <li><strong>Market Status</strong></li>
+  <li><strong>Product Statistics</strong></li>
+  <li><strong>Product Status</strong></li>
+  <li><strong>Trade</strong></li>
+  <li><strong>Trade break</strong></li>
+  <li><strong>Trade correction</strong></li>
+</ul>
+
+<h2 id="utp---uqdf-utp-qutation-data-feed-and-utdf-utp-trade-data-feed">UTP - UQDF (UTP Qutation data feed) and UTDF (UTP Trade data feed)</h2>
+<p>UTDF (UTP Trade data feed) contains</p>
+<ul>
+  <li><strong>Auction Summary</strong></li>
+  <li><strong>Feed Status</strong></li>
+  <li><strong>Market Status</strong></li>
+  <li><strong>Product Statistics</strong></li>
+  <li><strong>Trade</strong></li>
+  <li><strong>Trade Break</strong></li>
+  <li><strong>Trade Correction</strong></li>
+</ul>
+
+<p>UQDF (UTP Quote data feed) contains</p>
+<ul>
+  <li><strong>BBQuote</strong></li>
+  <li><strong>Feed Status</strong></li>
+  <li><strong>Market Status</strong></li>
+  <li><strong>NBBO Quote</strong></li>
+  <li><strong>Product Status</strong></li>
+</ul>
+
+<p>More about CTA and UTP can be found <a href="https://www.nyse.com/publicdocs/nyse/data/NYSE_Symbology_Spec_v1.0c.pdf">here</a></p>
+
+<h2 id="cboe-global-indices-feed-formerly-csmi">Cboe Global Indices Feed (formerly CSMI)</h2>
+<p>Cboe Global indices feed market data delivers real-time index values on over 400 products. Featured values from CBOE include SPX and the VIX spot, Standard &amp; Poor’s / Down Jones, FTSE Russell, Ameribor, Gemini, Merrill Lynch, MIller Howard, MSCI, and Societe Generale.</p>
+
+<h2 id="ice-impact-intercontenental-exchange-ice">ICE iMpact (Intercontenental Exchange (ICE))</h2>
+<p>ICE iMpact feed handler publishes derivatives market data on the Intercontenental Exchange (ICE)’s iMpact multicast feed.</p>
+
+<h2 id="miax-equities-feed-handler">MIAX Equities feed handler</h2>
+<p>MIAX’s parent holding company, Miami International Holdings, Inc. (MIH), operates and manages Miami International Securities exchange, MIAX PEARL, MIAX Emerald, etc.</p>
+
+<h2 id="montreal-exchange-mx-feed-handler">Montreal Exchange (MX) feed handler</h2>
+<p>MX publish data via MX’s SOLA HSVF UDP Multicast feed.</p>
+
+<h2 id="otc-market">OTC market</h2>
+
+<h1 id="europe">Europe</h1>
+<h2 id="aquis-stock-exchange-aqse">Aquis Stock Exchange (AQSE)</h2>
+<p>Aquis operates an exchange for the trading of European equities. 
+It seems comparatively smaller than other exchanges.</p>
+
+<h2 id="eurex-and-xetra-eobienhanced-order-book-interface-handler">Eurex and Xetra (EOBI(Enhanced Order book interface) handler)</h2>
+<p>Eurex is owned by Deutsche Borse AG(German Bourse), Xetra is operated by the Frankfurt Stock Exchange, and its underlying trading technology was based on that of the Eurex exchange. Xetra data is used to calculate the DAX, the German share index.</p>
+
+<h1 id="asia">Asia</h1>
+
+<h2 id="flex-full-feed-handler-japan">FLEX Full feed handler (Japan)</h2>
+<p>The FLEX Full feed pubish real time data which includes complete book market data from the Tokyo Stock Exchange (TSE), Sapporo Stock Exchange (SSE), Nagoya Stock Exchange (NSE), and the Fukuoka Stock Exchange (FSE). The TSE group is part of the larger Japan Exchange Group (JPX).</p>
+
+<h2 id="hkfe-hong-kong-futures-exchange-feed-handler">HKFE (Hong Kong Futures Exchange feed handler)</h2>
+
+<h2 id="hong-kong-securities-exchange-hkse-feed-handler">Hong Kong Securities Exchange (HKSE feed handler)</h2>
+
+<h2 id="taifex-feed-handler-taiwan">TAIFEX feed handler (TAIWAN)</h2>
+<p>TAIFEX publish real-time market data.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#data" class="page__taxonomy-item p-category" rel="tag">data</a><span class="sep">, </span>
+    
+      <a href="/tags/#data-science" class="page__taxonomy-item p-category" rel="tag">data science</a><span class="sep">, </span>
+    
+      <a href="/tags/#finance" class="page__taxonomy-item p-category" rel="tag">finance</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#data" class="page__taxonomy-item p-category" rel="tag">data</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-10-25T00:00:00+09:00">October 25, 2022</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/data/US-market-data-part1/" class="pagination--pager" title="US Market Data (Part 1)
+">Previous</a>
+    
+    
+      <a href="/c++/mmap-raii/" class="pagination--pager" title="mmap RAII
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/database/managing-db-with-mako/" rel="permalink">Managing DB with source code generator
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-12-15T00:00:00+09:00">December 15, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">We often write redundant codes. I personally had to write a parser for different market data protocols. This is not only tedious but also error prone. One wa...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/database/snowflake-udft/" rel="permalink">Snowflake and UDFTs
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-25T00:00:00+09:00">November 25, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Recently I had to do some analysis on a large dataset and sql couldn’t cut it. So I had to resort using user defined function. Snowflake provides user-define...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/c++/mmap-raii/" rel="permalink">mmap RAII
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-11-04T00:00:00+09:00">November 4, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">There are many ways to share data between processes.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/data/US-market-data-part1/" rel="permalink">US Market Data (Part 1)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-10-01T00:00:00+09:00">October 1, 2022</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Terminlogies:
+
+  L1: Level 1
+  L2: Level 2
+  L3: Level 3
+  OLD: Order Level data
+  LOB: Limit order book
+
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/uhbubaboi" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/papertradr" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://www.linkedin.com/in/jae-won-choi-746003232/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> Linkedin</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Jae Won Choi. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/data/US-market-data-part2/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/data/US-market-data-part2"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://uhbubaboi.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>
