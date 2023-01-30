@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>What is the definition of continuity? - Slow is smooth, smooth is fast</title>
-<meta name="description" content="When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.">
+<!-- begin _includes/seo.html --><title>Hausdorff’s maximality theorem (zorn’s lemma) - Slow is smooth, smooth is fast</title>
+<meta name="description" content="">
 
 
   <meta name="author" content="Jae Won Choi">
@@ -22,20 +22,20 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="Slow is smooth, smooth is fast">
-<meta property="og:title" content="What is the definition of continuity?">
-<meta property="og:url" content="http://localhost:4000/math/continuity-definitions/">
+<meta property="og:title" content="Hausdorff’s maximality theorem (zorn’s lemma)">
+<meta property="og:url" content="http://localhost:4000/math/hausdorffs-maximality-theorem/">
 
 
-  <meta property="og:description" content="When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.">
+  <meta property="og:description" content="">
 
 
 
 
 
   <meta name="twitter:site" content="@uhbubaboi">
-  <meta name="twitter:title" content="What is the definition of continuity?">
-  <meta name="twitter:description" content="When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.">
-  <meta name="twitter:url" content="http://localhost:4000/math/continuity-definitions/">
+  <meta name="twitter:title" content="Hausdorff’s maximality theorem (zorn’s lemma)">
+  <meta name="twitter:description" content="">
+  <meta name="twitter:url" content="http://localhost:4000/math/hausdorffs-maximality-theorem/">
 
   
     <meta name="twitter:card" content="summary">
@@ -46,7 +46,7 @@
 
 
 
-  <meta property="article:published_time" content="2022-01-12T00:00:00+09:00">
+  <meta property="article:published_time" content="2021-06-29T00:00:00+09:00">
 
 
 
@@ -57,7 +57,7 @@
   
 
 
-<link rel="canonical" href="http://localhost:4000/math/continuity-definitions/">
+<link rel="canonical" href="http://localhost:4000/math/hausdorffs-maximality-theorem/">
 
 
 
@@ -288,16 +288,16 @@
 
 
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="What is the definition of continuity?">
-    <meta itemprop="description" content="When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.">
-    <meta itemprop="datePublished" content="2022-01-12T00:00:00+09:00">
+    <meta itemprop="headline" content="Hausdorff’s maximality theorem (zorn’s lemma)">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2021-06-29T00:00:00+09:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
           <h1 id="page-title" class="page__title p-name" itemprop="headline">
-            <a href="http://localhost:4000/math/continuity-definitions/" class="u-url" itemprop="url">What is the definition of continuity?
+            <a href="http://localhost:4000/math/hausdorffs-maximality-theorem/" class="u-url" itemprop="url">Hausdorff’s maximality theorem (zorn’s lemma)
 </a>
           </h1>
           
@@ -308,7 +308,7 @@
       <span class="page__meta-date">
         <i class="far fa-calendar-alt" aria-hidden="true"></i>
         
-        <time datetime="2022-01-12T00:00:00+09:00">January 12, 2022</time>
+        <time datetime="2021-06-29T00:00:00+09:00">June 29, 2021</time>
       </span>
     
 
@@ -321,7 +321,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          3 minute read
+          less than 1 minute read
         
       </span>
     
@@ -333,93 +333,7 @@
 
       <section class="page__content e-content" itemprop="text">
         
-        <p>When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different.</p>
-
-<h2 id="topological-definition-of-continuity">Topological Definition of Continuity</h2>
-
-<p>The topological definition of continuity is as follows:</p>
-
-<h3 id="open-set-continuity">Open set Continuity</h3>
-
-<blockquote>
-  <p><strong>(Open set continuity)</strong> Given a topological space $X$ and $Y$, a function $f : X \to Y$ is continuous if for every open set $\mathcal{O} \in Y$ the inverse image $f^{-1}(\mathcal{O}) = { x \in X : f(x) \in \mathcal{O}}$ is an open subset of $X$</p>
-
-</blockquote>
-
-<p>This rather general definition of continuity can be quite baffling. There’s another topological definition of continuity:</p>
-
-<h3 id="sequential-continuity">Sequential Continuity</h3>
-
-<blockquote>
-  <p><strong>(Sequential continuity)</strong> Given a topological space $X$ and $Y$, a function $f : X \to Y$ is sequentially continuous $f(x_n) \to f(x)$ whenever $x_n \to x$. 
-(<strong>Remark:</strong> Note that <strong><em>sequential continuity does NOT imply continuity</em></strong> but <strong><em>continuity does imply sequential continuity.)</em></strong></p>
-
-</blockquote>
-
-<p>However, in <strong>a metric space</strong>, the above two definitions are <strong>equivalent</strong>.</p>
-
-<h2 id="metric-space-definition-of-continuity">Metric space Definition of Continuity</h2>
-
-<p>One can easily see that metric space definitions require a distance function (obviously) instead of open sets or sequences. Here we introduce some of the most fundamental definitions of continuity:</p>
-
-<h3 id="point-wise-continuity">Point-wise continuity</h3>
-
-<blockquote>
-  <p><strong>(Point-wise continuity)</strong> Given a metric space $(X, d_1)$ and $(Y, d_2)$, a function $f: X \to Y$ is continuous at point $x \in X$ if for every $\epsilon &gt; 0$ there exists $\delta &gt; 0$ such that $d_2(f(x), f(y)) &lt; \epsilon$  whenever $d_1(x,y) &lt; \delta$ 
-<strong>(Remark: note that point-wise continuity is clearly a local property)</strong>.</p>
-
-</blockquote>
-
-<h3 id="uniform-continuity">Uniform continuity</h3>
-
-<blockquote>
-  <p><strong>(Uniform continuity)</strong> Given a metric space $(X, d_1)$ and $(Y, d_2)$,  a function $f: X \to Y$ is uniformly continuous on $X$  if for every $\epsilon &gt; 0$ there exists a $\delta &gt; 0$ such that whenever $d_1(x,y) &lt; \delta$, we have $d_2(f(x), f(y)) &lt; \epsilon$ 
-<strong>(Remark: note that uniform continuity is a local property).</strong></p>
-
-</blockquote>
-
-<p>As opposed to the topological definition, the $\delta\text{-}\epsilon$ continuity definitions require a metric space.</p>
-
-<p>There’s even more definition of continuity:</p>
-
-<h3 id="lipschitz-continuity">Lipschitz continuity</h3>
-
-<blockquote>
-  <p><strong>(Lipschitz continuity)</strong> Given two metric spaces $(X, d_X)$ and $(Y, d_Y)$, a function $f: X \to Y$ is Lipschitz continuous if there exists a real constant $K \ge 0$  such that for all $x_1$ and $x_2$ in $X$,</p>
-
-\[d_Y(f(x_1), f(x_2)) \le Kd_X(x_1, x_2)\]
-
-  <p>Any such $K$  is called a Lipschitz constant for the function $f$. 
-<strong>(Remark: note that Lipschitz continuity is a global property)</strong> .</p>
-
-</blockquote>
-
-<h3 id="a-hölder-condition">a-<strong>Hölder Condition</strong></h3>
-
-<blockquote>
-  <p><strong>($\alpha$-Holder condition)</strong> Given two metric spaces $(X, d_X)$  and $(Y, d_Y)$, a function $f: X \to Y$ satisfies $\alpha$-Holder condition (or $\alpha$-Holder continuous) if there exists $C_\alpha$ such that</p>
-
-\[d_Y(f(x), f(x')) \le C_\alpha d_X(x, x') \; \forall x,x' \in X\]
-
-  <p><strong>(Remark: note that Holder condition is a global property)</strong> .</p>
-
-</blockquote>
-
-<p>The above two definitions also rely on metric spaces. However, unlike $\delta\text{-}\epsilon$ definitions which are local properties, the above continuities are global properties, hence they are a stronger.</p>
-
-<h2 id="why-so-many-definitions">Why so many definitions?</h2>
-
-<h3 id="continuity-with-different-degree-of-constraints">Continuity with different degree of constraints</h3>
-
-<p>Clearly there are lots of definitions of continuity but there is a good reason for it. Some continuity conditions are <strong><em>stronger</em></strong> than others. For instance, uniform continuity is a defines continuity on a set as opposed to point-wise continuity that defines it on a single point. Similarly, Lipschitz continuity and holder condition are both <em>global</em> property with very strict condition that all pairs satisfy the bound.</p>
-
-<!-- ### Continuity preserves topological structure!
-
-Recall that a metric induces a topology. If an operator is continuous, then by the definition of a topological continuity, the open sets are preserved and the topological structure of an image remains intact(?). -->
-
-<h2 id="why-topological-definition-of-continuity">Why topological definition of continuity?</h2>
-
-<p>Then why do we have a topological definition and a metric space definition? Well the topological space is more general than the metric space (metric spaces are topological spaces with additional constraints). Hence the definition of continuity on a topological space also hold in metric spaces.</p>
+        <object data="/assets/pdfs/Hausdorff_s_Maximality_Theorem.pdf" width="1000" height="1000" type="application/pdf"></object>
 
         
       </section>
@@ -436,7 +350,13 @@ Recall that a metric induces a topology. If an operator is continuous, then by t
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#continuous" class="page__taxonomy-item p-category" rel="tag">continuous</a>
+      <a href="/tags/#hausdorff-s-maximality-theorem" class="page__taxonomy-item p-category" rel="tag">hausdorff's maximality theorem</a><span class="sep">, </span>
+    
+      <a href="/tags/#real-analysis" class="page__taxonomy-item p-category" rel="tag">real analysis</a><span class="sep">, </span>
+    
+      <a href="/tags/#set-theory" class="page__taxonomy-item p-category" rel="tag">set theory</a><span class="sep">, </span>
+    
+      <a href="/tags/#zorn-s-lemma" class="page__taxonomy-item p-category" rel="tag">zorn's lemma</a>
     
     </span>
   </p>
@@ -461,7 +381,7 @@ Recall that a metric induces a topology. If an operator is continuous, then by t
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-01-12T00:00:00+09:00">January 12, 2022</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-06-29T00:00:00+09:00">June 29, 2021</time></p>
 
       </footer>
 
@@ -470,11 +390,10 @@ Recall that a metric induces a topology. If an operator is continuous, then by t
       
   <nav class="pagination">
     
-      <a href="/math/hausdorffs-maximality-theorem/" class="pagination--pager" title="Hausdorff’s maximality theorem (zorn’s lemma)
-">Previous</a>
+      <a href="#" class="pagination--pager disabled">Previous</a>
     
     
-      <a href="/machine-learning/on-off-online-offline-rl/" class="pagination--pager" title="on- and off-policy? online and offline reinforcement learning?
+      <a href="/math/continuity-definitions/" class="pagination--pager" title="What is the definition of continuity?
 ">Next</a>
     
   </nav>
@@ -737,8 +656,8 @@ Bats PITCH feeds publish real-time full depth-of-book order and execution messag
     
   <script>
     var disqus_config = function () {
-      this.page.url = "http://localhost:4000/math/continuity-definitions/";  /* Replace PAGE_URL with your page's canonical URL variable */
-      this.page.identifier = "/math/continuity-definitions"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+      this.page.url = "http://localhost:4000/math/hausdorffs-maximality-theorem/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/math/hausdorffs-maximality-theorem"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
     };
     (function() { /* DON'T EDIT BELOW THIS LINE */
       var d = document, s = d.createElement('script');

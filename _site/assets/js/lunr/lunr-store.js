@@ -1,4 +1,10 @@
 var store = [{
+        "title": "Hausdorff's maximality theorem (zorn's lemma)",
+        "excerpt":" ","categories": ["math"],
+        "tags": ["set theory","zorn's lemma","hausdorff's maximality theorem","real analysis"],
+        "url": "/math/hausdorffs-maximality-theorem/",
+        "teaser": null
+      },{
         "title": "What is the definition of continuity?",
         "excerpt":"When I first studied real analysis, the definition of continuity was clear but there were just so many of them. I took some time to list as many definition of continuity as I could, and provide some observations on why we need so many definitions and how they are different....","categories": ["math"],
         "tags": ["continuous"],
