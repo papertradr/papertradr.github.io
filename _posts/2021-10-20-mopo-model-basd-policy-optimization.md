@@ -67,6 +67,7 @@ $$
 $$
 
 Now the main part of the proof:
+
 $$
 \begin{align*}
 \eta_M(\widehat{\pi}) &\ge \eta_{\widehat{M}}(\widehat{\pi}) \quad \because (7)\\
