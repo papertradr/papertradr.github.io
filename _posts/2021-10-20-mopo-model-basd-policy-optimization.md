@@ -65,6 +65,7 @@ $$
 &\eta_M(\pi) - 2 \lambda \epsilon_\mu(\pi) \le \eta_{\widehat{M}}(\pi) - \lambda \epsilon_\mu(\pi) \tag{*}
 \end{align*}
 $$
+
 Now the main part of the proof:
 $$
 \begin{align*}
@@ -78,6 +79,7 @@ $$
 \eta_M(\widehat{\pi}) &\ge \sup_\pi \{ \eta_M(\pi) - 2\lambda \epsilon_\mu(\pi) \}
 \end{align*}
 $$
+
 This thoeretical result is very interesting. As mentioned in the paper, 
 > one consequence of the above result is that $\eta_M(\widehat{\pi}) \ge \eta_M(\pi^B) - 2 \lambda \epsilon_\mu (\pi^B)$ so $\widehat{\pi}$ should perform at least as well as the behavioral policy $\pi^B$ since $\epsilon_\mu(\pi^B)$ is expected to be small.
 
