@@ -26,7 +26,17 @@ Before we dive into the proofs, let's list some notations:
 where $T$ is the ground truth dynamics of the environment and $\widehat{T}$ is the estimated dynamics from the batch dataset. 
 
 The key idea in the paper is lemma 4.1:
-> **Lemma 4.1** (Teloscoping lemma). Let $M$ and $\hat{M}$ be two MDPs with the same reward function $r$, but different dynamics $T$ and $\hat{T}$ respectively. Let $G^{\pi}_{\widehat{M}} (s,a) := \mathbb{E}_{s' \sim \widehat{T}(s,a)} [ V_M^\pi (s')] - \mathbb{E}_{s' \sim T(s,a)} [ V_M^\pi(s')]$. Then, $$\eta_{\widehat{M}}(\pi) - \eta_M(\pi) = \gamma \mathbb{E}_{(s,a) \sim \rho^\pi_{\widehat{T}}} \Big[ G^\pi_{\widehat{M}} (s,a) \Big].$$ As an immediate corollary, we have $$\eta_M(\pi) = \mathbb{E}_{(s,a)\sim \rho^\pi_{\widehat{T}}} \Big[ r(s,a) - \gamma G_{\widehat{M}}^\pi (s,a) \Big] \le \mathbb{E}_{(s,a) \sim \rho^\pi_{\widehat{T}}} \Big[ r(s,a) - \gamma |G^\pi_{\widehat{M}} (s,a)| \Big]$$
+> **Lemma 4.1** (Teloscoping lemma). Let $M$ and $\hat{M}$ be two MDPs with the same reward function $r$, but different dynamics $T$ and $\widehat{T}$ respectively. Let 
+> 
+> $$\qquad \qquad G^{\pi}_{\widehat{M}} (s,a) := \mathbb{E}_{s' \sim \widehat{T}(s,a)} [ V_M^\pi (s')] - \mathbb{E}_{s' \sim T(s,a)} [ V_M^\pi(s')]$$.
+> 
+> Then, 
+> 
+> $$\eta_{\widehat{M}}(\pi) - \eta_M(\pi) = \gamma \mathbb{E}_{(s,a) \sim \rho^\pi_{\widehat{T}}} \Big[ G^\pi_{\widehat{M}} (s,a) \Big].$$ 
+>
+> As an immediate corollary, we have 
+> 
+> $$\eta_M(\pi) = {\mathbb{E}}_{(s,a)\sim \rho^\pi_{\widehat{T}}} \Big[ r(s,a) - \gamma G_{\widehat{M}}^\pi (s,a) \Big] \le \mathbb{E}_{(s,a) \sim \rho^\pi_{\widehat{T}}} \Big[ r(s,a) - \gamma |G^\pi_{\widehat{M}} (s,a)| \Big]$$
 
 As the paper points out, the quantity $G_{\hat{M}}^\pi (s,a)$ plays the key role of **linking** the estimation error of the dynamics and the estimation error of the return. $G_{\hat{M}}^\pi (s,a)$ is the difference in average returns between MDP with dynamics $\widehat{T}$ and $T$. 
 
