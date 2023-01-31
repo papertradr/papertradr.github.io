@@ -62,7 +62,7 @@ $$
  &\le \lambda \bar{\mathbb{E}}_{(s,a) \sim \rho^\pi_{\widehat{T}}} [\mu(s,a)] \quad \because  \text{assumption 3 and eq (6)}\\
  &= \lambda \epsilon_\mu(\pi)  \quad \because \text{definition}\\
 \implies & -\lambda \epsilon_\mu(\pi) \le \eta_{\widehat{M}}(\pi) - \eta_M(\pi) \le \lambda \epsilon_\mu(\pi)\\
-&\eta_M(\pi) - 2 \lambda \epsilon_\mu(\pi) \le \eta_{\widehat{M}}(\pi) - \lambda \epsilon_\mu(\pi) \tag{*}
+&\eta_M(\pi) - 2 \lambda \epsilon_\mu(\pi) \le \eta_{\widehat{M}}(\pi) - \lambda \epsilon_\mu(\pi) \quad \quad  \cdots (*)
 \end{align*}
 $$
 
