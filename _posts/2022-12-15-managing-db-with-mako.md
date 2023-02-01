@@ -15,7 +15,7 @@ published: true
 
 We often write redundant codes. I personally had to write a parser for different market data protocols. This is not only tedious but also error prone. One way to tackle this problem is to normalize all data into a single in-house protocol. However, if there is a new protocol that your in-house protocol does not support, then you need to redesign your protocol which could be a pain. Additionally, you need to know all the different protocols in order to implement a normalized protocol that takes all of them into account. 
 
-Another redundant code I had to write recently was sql code to manage database systems. While most sql databases provide a gui (pgadmin, mysql workbench), some operations take a long time that you just want to run a script in the background. Other sql codes I had to write repeatedly are 
+Another redundant code I had to write recently was sql code to manage database systems. While most sql databases provide a gui (pgadmin, mysql workbench), some operations take a long time that you just want to run a script in the background. Some sql codes I had to write repeatedly were 
 * Modifying privileges to schema and table for each user
 * Modyifying columns in tables
 * Copying data into table
@@ -29,7 +29,7 @@ Mako is a template code generator that takes a yaml file and a template file to 
 
 
 ## YAML file
-In your yaml file, you define your parameters or the specification of your database tables. Here I have to parameters - `CREATETABLE_LST` and `GRANT_REVOKE_PRIVILEGES_TABLES_LST`. Later we will see that the generator will read the names in the list and only modify them. The database table specification is listed under `TABLES`. Depending on which database you use, you may want to change the name of the datatype and the primary key. In our example, we are using **Snowflake** database, so all the datatypes will be using the Snowflake datatypes. 
+In your yaml file, you define your parameters or the specification of your database tables. Here I have two parameters - `CREATETABLE_LST` and `GRANT_REVOKE_PRIVILEGES_TABLES_LST`. Later we will see that the generator will read the names in the list and only modify them. The database table specification is listed under `TABLES`. Depending on which database you use, you may want to change the name of the datatype and the primary key. In our example, we are using **Snowflake** database, so all the datatypes will be using the Snowflake datatypes. 
 
 Here is an example yaml file:
 ```yaml
