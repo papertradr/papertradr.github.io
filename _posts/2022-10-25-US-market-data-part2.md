@@ -82,7 +82,7 @@ MIAX's parent holding company, Miami International Holdings, Inc. (MIH), operate
 ## Montreal Exchange (MX) feed handler
 MX publish data via MX's SOLA HSVF UDP Multicast feed. 
 
-## OTC market
+<!-- ## OTC market -->
 
 
 
@@ -99,9 +99,9 @@ Eurex is owned by Deutsche Borse AG(German Bourse), Xetra is operated by the Fra
 ## FLEX Full feed handler (Japan)
 The FLEX Full feed pubish real time data which includes complete book market data from the Tokyo Stock Exchange (TSE), Sapporo Stock Exchange (SSE), Nagoya Stock Exchange (NSE), and the Fukuoka Stock Exchange (FSE). The TSE group is part of the larger Japan Exchange Group (JPX). 
 
-## HKFE (Hong Kong Futures Exchange feed handler)
+<!-- ## HKFE (Hong Kong Futures Exchange feed handler)
 
-## Hong Kong Securities Exchange (HKSE feed handler)
+## Hong Kong Securities Exchange (HKSE feed handler) -->
 
 ## TAIFEX feed handler (TAIWAN)
 TAIFEX publish real-time market data.
