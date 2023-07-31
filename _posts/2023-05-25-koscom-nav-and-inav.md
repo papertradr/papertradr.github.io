@@ -19,7 +19,7 @@ $$ \text{nav} = {\text{cash} + \sum \text{assets} \over \text{number of oustandi
 The calculation is quite easy but getting the right data can be a hassle. In this post, we go over how to calculate the net asset value of 
 
 
-## Data and paramters
+## Data and parameters
 We will calculate the net asset value of **KODEX KOSPI200 ETF (KR7069500007)** that tracks KOSPI200 index and **KODEX KOSDAQ150 ETF (KR7229200001)** that tracks KOSDAQ150 index on May 26, 2023. 
 
 In our database, we have the following tables (and interface id):
