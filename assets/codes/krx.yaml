@@ -1,0 +1,8177 @@
+###################################################
+# KRX Intenal Python Enums
+###################################################
+int_enums: {}
+
+float_enums: {}
+
+str_enums:
+  orderacktype:
+    NORMAL:                     "'normal'"
+    REJECTION:                  "'rejection'"
+    AUTO_CANCEL:                "'auto_cancel'"
+
+  boardevent:
+    StartOfDerivativeRegularMarket:        "'BB1'"
+    EndOfDerivativeRegularMarket:          "'AB2'"
+    StartOfClosingAuction:                 "'BC1'"
+    EndOfClosingAuction:                   "'AC2'"
+    StartOfFinalTradingDateClosingAuction: "'DC1'"
+    EndOfFinalTradingDate:                 "'DC2'"
+
+
+  investortype:
+    FINANCIAL_INVESTMENT:     "'1000'"    #"금융투자"
+    INSURANCE:                "'2000'"    #"보험"
+    INVESTMENT_TRUST:         "'3000'"    #"투신"
+    PRIVATE_EQUITY_FUND:      "'3100'"    #"사모"
+    BANK:                     "'4000'"    #"은행"
+    OTHER_FINANCIAL_FIRMS:    "'5000'"    #"기타금융"
+    PENSION_FUND:             "'6000'"    #"연기금"
+    ETC:                      "'7000'"    #"미분류"
+    OTHER_CORPORATIONS:       "'7100'"    #"기타법인"
+    RETAIL:                   "'8000'"    #"개인"
+    FOREIGNER_WITH_ID:        "'9000'"    #"ID있는_외국인"
+    FOREIGNER_WITHOUT_ID:     "'9001'"    #"ID없는_외국인"
+
+###################################################
+# KRX Binary data Message fields
+###################################################
+message_fields:
+  side:
+    datatype_py: str
+    datatype_rs: String
+    size: 1
+    fields:
+      "1":                 "SELL" 
+      "2":                 "BUY"
+      " ":                 "AUCTION"
+      "0":                 "NONE"
+  investortype:
+    datatype_py: str
+    datatype_rs: String
+    size: 4
+    fields:
+      "1000":       "FINANCIAL_INVESTMENT"    # "금융투자"
+      "2000":       "INSURANCE"               # "보험"
+      "3000":       "INVESTMENT_TRUST"        # "투신"
+      "3100":       "PRIVATE_EQUITY_FUND"     # "사모"
+      "4000":       "BANK"                    # "은행"
+      "5000":       "OTHER_FINANCIAL_FIRMS"   # "기타금융"
+      "6000":       "PENSION_FUND"            # "연기금"
+      "7000":       "ETC"                     # "미분류"
+      "7100":       "OTHER_CORPORATIONS"      # "기타법인"
+      "8000":       "RETAIL"                  # "개인"
+      "9000":       "FOREIGNER_WITH_ID"       # "ID있는_외국인"
+      "9001":       "FOREIGNER_WITHOUT_ID"    # "ID없는_외국인"
+
+###################################################
+# KRX UDP port mappings
+###################################################
+udp_port_mappings:
+  # 증권 A : KOSPI
+  # 증권 B : KOSDAQ
+  # 증권 C : ETF, ELW, ETN
+
+  ## 증권 A, 유가증권수직 12M/100M 
+  10001:                    "stockA"             # stock fundamental
+  10007:                    "stockA"             # 주식종목정보변경    
+  10015:                    "stockA"             # stock index
+  
+  10031:                    "stockA"             #  
+  
+  10041:                    "stockA"             # stock LP/MM info
+  
+  ### 증권 A, 유가증권수직 100M
+  #10002:                    "stockA"            # trade/orderbook
+  #10003:                    "stockA"            # trade/orderbook
+  #10004:                    "stockA"            # trade/orderbook
+  #10005:                    "stockA"            # trade/orderbook
+  #10006:                    "stockA"            # trade/orderbook
+
+  ## 증권 A, 유가증권수직 12M
+  10022:                    "stockA"             # trade (group 00001) 
+  10023:                    "stockA"             # trade (group 00002)
+  10024:                    "stockA"             # trade (group 00003)
+  10025:                    "stockA"             # trade (group 00004)
+  10026:                    "stockA"             # trade (group 00005)
+  10027:                    "stockA"             # orderbook 
+  10028:                    "stockA"             # orderbook
+
+  ## 증권 B, 코스닥통합 12M/100M
+  10101:                    "stockB"             # stock fundamental
+  10107:                    "stockB"             # 주식종목정보변경  
+  10108:                    "stockB"             # 종목별 투자자별 종가 통계
+  10111:                    "stockB"             # stock fundamental
+  10117:                    "stockB"             # stock index
+
+  ### 증권 B, 코스닥통합100M
+  #10102:                    "stockB"
+  #10103:                    "stockB"
+  #10104:                    "stockB"
+  #10105:                    "stockB"
+  #10106:                    "stockB"
+  #10112:                    "stockB"            # trade
+
+
+  ## 증권 B, 코스닥통합12M
+  10122:                    "stockB"           # trade (group 00001)
+  10123:                    "stockB"           # trade (group 00002)
+  10124:                    "stockB"           # trade (group 00003)
+  10125:                    "stockB"           # trade (group 00004)
+  10126:                    "stockB"           # trade (group 00005)
+  10127:                    "stockB"           # orderbook
+  10128:                    "stockB"           # orderbook
+  
+  10132:                    "stockB"           # stock info
+  10133:                    "stockB"           # stock info
+
+  ## 증권 C, 증권상품 12M/100M
+  10201:                    "stockC"     # stock fundamental    
+  10207:                    "stockC"     # stock info
+  
+  ### 증권 C, 증권상품100M
+  #10202:                    "stockC"
+  #10203:                    "stockC"
+  #10204:                    "stockC"
+  #10205:                    "stockC"
+  #10206:                    "stockC"
+
+
+  ## 증권 C, 증권상품12M
+  10222:                    "stockC"     # trade (group 00006)
+  10223:                    "stockC"     # trade (group 00007)
+  10224:                    "stockC"     # trade (group 00008)
+  10225:                    "stockC"     # trade (group 00009)
+  10226:                    "stockC"     # trade (group 00010)
+  10227:                    "stockC"     # orderbook
+  10228:                    "stockC"     # orderbook
+
+  10231:                    "stockC"     # ETF PDF
+  10232:                    "stockC"     # ETF Nav
+  10233:                    "stockC"     # overseas etf nav
+  10234:                    "stockC"     # ELW sensitivity
+  10235:                    "stockC"     # elw
+  10236:                    "stockC"     # etn IIV
+  10237:                    "stockC"     # ETF NAV
+
+
+  ### 파생 A, 통합선물 100M
+  #10302:                    "futureA" 
+  #10303:                    "futureA"
+  #10304:                    "futureA"
+  #10305:                    "futureA"
+  #10306:                    "futureA"
+  #10307:                    "futureA"
+  #10308:                    "futureA"
+  #10309:                    "futureA"
+  #10310:                    "futureA"
+
+  #10322:                    "futureA"            # kospi200 future
+  #10323:                    "futureA"            # kosdaq150 future
+  #10324:                    "futureA"            # equity 
+  #10325:                    "futureA"            # NOT working
+  #10326:                    "futureA"            # mini kospi200 future
+  #10327:                    "futureA"            # kospi200 weekly call option
+
+  #10331:                    "futureA"            # kospi200 future
+  #10332:                    "futureA"            # kosdaq150 future
+  #10333:                    "futureA"            # equity
+  #10334:                    "futureA"            # NOT working
+  #10335:                    "futureA"            # mini kospi200 future
+  #10336:                    "futureA"            # kospi200 weekly put option
+ 
+#  ## 파생 A, 통합선물 12M/100M
+  10301:                    "futureA"             # stock fundamental 
+  10315:                    "futureA"             # stock fundamental
+  10316:                    "futureA"             # stock fundamental
+  10321:                    "futureA"             # option fundamental
+
+  ## 파생 A, 통합선물 12M
+  10342:                    "futureA"            # kospi200 future 
+  10343:                    "futureA"            # kosdaq150 future
+  10344:                    "futureA"            # equity future
+  10345:                    "futureA"            # tbill future
+  10346:                    "futureA"            # gold future
+  10347:                    "futureA"            # mini kospi200 future
+  10348:                    "futureA"            # kospi200 volatility future
+  10349:                    "futureA"            # kospi200 sector index future
+  10350:                    "futureA"            # krx300 future
+
+  10362:                    "futureA"            # kospi200 call option
+  10363:                    "futureA"            # kosdaq150 call option
+  10364:                    "futureA"            # equity call option
+  10366:                    "futureA"            # mini kospi200 call option
+  10367:                    "futureA"            # weekly kospi200 call option
+
+  10371:                    "futureA"            # kospi200 put option
+  10372:                    "futureA"            # kosdaq150 put option
+  10373:                    "futureA"            # equity put option
+  10375:                    "futureA"            # mini kospi200 put option
+  10376:                    "futureA"            # kospi200 weekly put option
+
+  ### 채권 A
+  10401:                    "bondA"            # bond 
+  10402:                    "bondA"            # bond 
+  10403:                    "bondA"            # bond 
+  10404:                    "bondA"            # bond 
+  10405:                    "bondA"            # bond 
+  10406:                    "bondA"            # bond 
+  10407:                    "bondA"            # bond 
+  10408:                    "bondA"            # bond 
+  
+  10412:                    "bondA"            # bond 
+  10413:                    "bondA"            # bond 
+  10414:                    "bondA"            # bond 
+  10415:                    "bondA"            # bond 
+
+  10422:                    "bondA"            # bond 
+  10423:                    "bondA"            # bond 
+  10424:                    "bondA"            # bond 
+  10425:                    "bondA"            # bond 
+
+  # 주식파생 기초자산 정보
+  10051:                    "future"
+  10052:                    "future"
+
+  # 정산 데이터
+  10391:                    "future"
+
+
+###########################################################
+# KRX Messages Layout
+###########################################################
+messages:
+  IFMSBTD0001:  # 주식 종목정보
+    name: StockBatchDataMessage
+    contains: stock_batch_data
+    code: A0
+    subcodes:
+      - 01S
+      - 02S
+      - 03S
+      - 04S
+      - 01Q
+      - 01X
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      contract_instruments_total_number:
+        size: 6
+        datatype_py: int
+        datatype_rs: i32
+      business_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      abbreviated_issue_code:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      abbreviated_issue_name:
+        size: 40
+        datatype_py: str
+        datatype_rs: String
+      abbreviated_issue_name_in_en:
+        size: 40
+        datatype_py: str
+        datatype_rs: String
+      group_number:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      market_operation_product_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      security_group_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      unit_trading:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      rights_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      par_value_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      today_single_price_settled_base_price_issue:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      re_evaluation_reason_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      base_price_change:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      random_end_trigger_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      market_alert:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      market_alert_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      korea_corporate_governance_stock_price_index_kogi:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      administration_issue:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      unfaithful_disclosure:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      back_door_listing:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      trading_halt:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      industry_id:
+        size: 10
+        datatype_py: str
+        datatype_rs: String
+      small_medium_sized_business:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      section_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      investment_institution_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      base_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      prev_day_closing_price_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      prev_day_closing_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      prev_day_accumulated_trading_amount:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      prev_day_accumulated_trading_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      upper_limit_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      lower_limit_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      securities_substitute_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      par_value:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      issuing_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      listing_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      listed_shares_number:
+        size: 16
+        datatype_py: int
+      liquidation_trade:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      establishment_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      maturity_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      exercising_period:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      right_expiration_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      elw_bw_exercise_price:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      capital:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      credit_order_availability:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      limit_order_permission_type_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      market_price_order_permission_type_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      conditioned_order_permission_type_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      best_favorable_order_permission_type_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      first_best_order_permission_type_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      capital_increase_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      other_stock_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      national_stock:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      appraised_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      lowest_order_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      highest_order_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      main_board_unit_volume:
+        size: 11
+        datatype_py: int
+      lot_size_after_hours_trading:
+        size: 11
+        datatype_py: int
+      reits_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      target_stock_isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      currency_iso_code:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      country_code:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      market_maker_allowed:   
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      after_hours_trading_allowed:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      closing_price_trading_pre_opening_market:
+        size: 1
+        datatype_py: str
+        datatype_rs: String        
+      pre_opening_market_block_trading:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      pre_opening_market_basket_trading:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      estimated_trading_price_annoucement:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      short_selling:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      etf_tracking_difference:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      regs:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      spac:
+        size: 1
+        datatype_py: str
+        datatype_rs: String  
+      tax_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      substitute_price_appraisal_ratio:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      investment_caution_issue:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      delisting_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      short_term_overtraded_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      etf_replication_method_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      expiration_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      distribution_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      redemption_price_calculation_start_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      redemption_price_calculation_end_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      etp_product_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      index_calculation_institution_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      index_market_classification_id:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      index_sequence_number:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      tracking_index_leverage_inverse_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      reference_index_leverage_inverse_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      index_asset_classification_id_1:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      index_asset_classification_id_2:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      ip_underwriter_member_number:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      lp_order_availability:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      low_liquidity:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      abnormal_rise:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      upper_limit_quantity:
+        size: 23
+        datatype_py: float
+      investment_warning_issue:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      insufficient_number_of_listed_shares:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      spac_merger:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      segment_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSBTD0022: # 파생 종목정보
+    name: DerivativeBatchDataMessage
+    contains: derivative_batch_data
+    code: A0
+    subcodes:
+      - 01F
+      - 02F
+      - 03F
+      - 04F
+      - 05F
+      - 06F
+      - 07F
+      - 08F
+      - 09F
+      - 10F
+      - 11F
+      - 12F
+      - 13F
+      - 15F
+      - 16F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      contract_instruments_total_number:
+        size: 6
+        datatype_py: int
+        datatype_rs: i32
+      business_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      futures_options_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      product_id:
+        size: 11
+        datatype_py: str
+        datatype_rs: String
+      abbreviated_issue_code:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      issue_name:
+        size: 80
+        datatype_py: str
+        datatype_rs: String
+      abbreviated_issue_name:
+        size: 40
+        datatype_py: str
+        datatype_rs: String
+      english_issue_name:
+        size: 80
+        datatype_py: str
+        datatype_rs: String
+      abbreviated_issue_name_in_en:
+        size: 40
+        datatype_py: str
+        datatype_rs: String
+      market_operation_product_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      listing_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      delisting_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      spread_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      payment_method:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      price_limit_expansion_type_code_direction:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      price_limit_expansion_final_stage:
+        size: 3
+        datatype_py: int
+      upper_price_limit_1st_stage:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      upper_price_limit_2nd_stage:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      upper_price_limit_3rd_stage:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      lower_price_limit_1st_stage:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      lower_price_limit_2nd_stage:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      lower_price_limit_3rd_stage:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      base_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      underlying_asset_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      exercise_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      spread_composition_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      spread_composition_isin_1:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      spread_composition_isin_2:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      last_trading_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      last_payment_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      delivery_month_sequence_number:
+        size: 3
+        datatype_py: int
+      expiration_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      exercise_price:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      base_price_adjustment_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      trading_unit:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      trading_multiplier:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      liquidity_providing_lp_type:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      listing_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      atm:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      adjustment_reason_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_closing_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      remaining_days:
+        size: 8
+        datatype_py: int
+        datatype_rs: i32
+      adjusted_base_price:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      base_price_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      trading_type_code_base_price:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      previous_day_adjusted_closing_price:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      block_trading_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      previous_day_bpmm:
+        size: 23
+        datatype_py: float
+      clearning_margins_type_code_base_price:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      theoretical_settlement_price:
+        size: 16
+        datatype_py: float
+        datatype_rs: double
+      base_theoretical_price:
+        size: 16
+        datatype_py: float
+        datatype_rs: double
+      previous_day_settlement_price:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      trading_halt:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      circuit_breaker_upper_limit_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      circuit_breaker_lower_limit_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      displayable_exercise_price:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      atm_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      last_trading_day:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      settlement_price_dividend_value:
+        size: 16
+        datatype_py: float
+        datatype_rs: double
+      previous_day_closing_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      previous_day_closing_price_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      previous_day_opening_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      previous_day_high_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      previous_day_low_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      first_trading_day:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      last_trading_time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      settlement_price_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      disparate_ratio:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      previous_day_open_interest:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      previous_day_best_ask:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      previous_day_best_bid:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      implied_volatility:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      all_time_highest_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      all_time_lowest_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      yearly_highest_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      yearly_lowest_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      all_time_highest_price_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      all_time_lowest_price_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      yearly_highest_price_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      yearly_lowest_price_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      number_of_listing_days_in_year:
+        size: 8
+        datatype_py: int
+        datatype_rs: i32
+      number_of_trading_days_in_month:
+        size: 8
+        datatype_py: int
+        datatype_rs: i32
+      number_oftrading_days_in_year:
+        size: 8
+        datatype_py: int
+        datatype_rs: i32
+      previous_day_number_of_trades:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      previous_day_accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      previous_day_accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      previous_total_accumulated_trade_volume:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      previous_total_accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      cd_rates:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      open_interest_volume:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      underlying_asset_product_id:
+        size: 4
+        datatype_py: str
+        datatype_rs: String
+      asset_group_offset_rate:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      limit_order_permission_type_code:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      market_price_order_permission_type_code:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      conditioned_order_permission_type_code:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      best_favorable_order_permission_type_code:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      efp_trading_item:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      flex_trading_item:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      efp_trading_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      EFP_trading_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      market_closed:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      dynamic_price_restriction:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      dynamic_upper_limit_interval:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      dynamic_lower_limit_interval:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      underlying_asset_market_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      upper_limit_quantity:
+        size: 23
+        datatype_py: float
+      lower_limit_quantity:
+        size: 23
+        datatype_py: float
+      block_trading_upper_limit_quantity:
+        size: 23
+        datatype_py: float
+      block_trading_lower_limit_quantity:
+        size: 23
+        datatype_py: float
+      base_product_id:
+        size: 11
+        datatype_py: str
+        datatype_rs: String
+      subsidiary_product_id:
+        size: 11
+        datatype_py: str
+        datatype_rs: String
+      issues_for_base_product_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      issues_for_subsidiary_product_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      settlement_week:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      suspended_stocks:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      suspended_stocks_designation_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+  IFMSBTD0004:
+    name: ELWBatchDataMessage
+    contains: elw_batch_data
+    code: A1
+    subcodes: 
+      - 02S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      distid:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      issuing_market_participant:
+        size: 80
+        datatype_py: str
+        datatype_rs: String
+      issuing_market_participant_en:
+        size: 80
+        datatype_py: str
+        datatype_rs: String
+      issuing_market_participant_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      market_id1:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      market_id2:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      market_id3:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      market_id4:
+        size: 3
+        datatype_py: str
+        datatype_rs: String  
+      market_id5:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_code1:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_code2:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_code3:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_code4:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_code5:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      asset_composition_ratio1:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      asset_composition_ratio2:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      asset_composition_ratio3:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      asset_composition_ratio4:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      asset_composition_ratio5:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      index_id:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      entitlement_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      exercise_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      final_payment_method:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      last_trading_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      delivery_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      intrinsic_price:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      exercise_right:
+        size: 200
+        datatype_py: str
+        datatype_rs: String
+      conversion_rate:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      price_increase_participation_rate:
+        size: 10
+        datatype_py: float
+      compensation_rate:
+        size: 10
+        datatype_py: float
+      fixed_payment_amount:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      payment_agent_name:
+        size: 80
+        datatype_py: str
+        datatype_rs: String
+      maturity_valuation_method:
+        size: 200
+        datatype_py: str
+        datatype_rs: String
+      entitlement_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      lp_holding_quantity:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      filler:
+        size: 4
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  IFMSBTD0005:
+    name: ETNBatchDataMessage
+    contains: etn_batch_data
+    code: A1
+    subcodes: 
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      issuer_name:
+        size: 80
+        datatype_py: str
+        datatype_rs: String
+      issuer_english_name:
+        size: 80
+        datatype_py: str
+        datatype_rs: String
+      issuer_numbers:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      payment_method:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      last_trading_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      last_payment_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      lp_holding_quantity:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      loss_prediction_etn_profit_structure_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      maximum_redemption_price:
+        size: 11
+        datatype_py: int
+      minimum_redemption_price:
+        size: 11
+        datatype_py: int
+      early_redemption_allowed:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      early_redemption_period_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      appraisal_price_institution_code_1:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      appraisal_price_institution_code_2:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSRPD0004:   # 증권체결 
+    name: StockTradeMessage
+    contains: stock_trade
+    code: A3
+    subcodes:
+      - 01S
+      - 01Q
+      - 01X
+      - 02S
+      - 03S
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      price_change_since_previous_day_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      price_change_since_previous_day_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      trade_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      trade_volume:
+        size: 10
+        datatype_py: int
+      opening_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      trade_type:
+        size: 1
+        datatype_py: decode_side
+        datatype_rs: String
+      lp_holding_quantity:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSRPD0036:  # 파생 체결
+    name: DerivativeTradeMessage
+    contains: derivative_trade
+    code: A3
+    subcodes:
+      - 01F
+      - 02F
+      - 03F
+      - 04F
+      - 05F
+      - 06F
+      - 07F
+      - 08F
+      - 09F
+      - 10F
+      - 11F
+      - 12F
+      - 13F
+      - 14F
+      - 15F
+      - 16F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      trade_volume:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      nearby_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      distant_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      opening_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      prev_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      trade_type:
+        size: 1
+        datatype_py: decode_side
+        datatype_rs: String
+      dynamic_price_range_upper_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      dynamic_price_range_lower_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSRPD0008:  # 장운영TS
+    name: BoardEventMessage
+    contains: board_event
+    code: A7
+    subcodes: 
+      - 01S
+      - 02S
+      - 03S
+      - 04S
+      - 01Q
+      - 01X
+      - 01B
+      - 01M
+      - 01K
+      - 01R
+      - 01F
+      - 02F
+      - 03F
+      - 04F
+      - 05F
+      - 06F
+      - 07F
+      - 08F
+      - 09F
+      - 10F
+      - 11F
+      - 12F
+      - 13F
+      - 14F
+      - 15F
+      - 16F
+      - 01G
+      - 01E
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      board_event_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_event_start_time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      board_event_group_code:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      trading_halt_reason_code:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+
+
+  ######################################
+  IFMSRPD0021:  # 증권 snapshot (MM/LP 호가 미포함)
+    name: StockSnapshotMessage
+    contains: stock_snapshot
+    code: B2
+    subcodes:
+      - 01S
+      - 01Q
+      - 01X
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String 
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      price_change_since_previous_day_code:
+        size: 1
+        datatype_py: int
+      price_change_since_previous_day_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      upper_limit_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      lower_limit_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      current_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      opening_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      last_trade_side:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32      
+      l4askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32      
+      l5askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32      
+      l6askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32      
+      l7askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32      
+      l8askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32      
+      l9askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32      
+      l10askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32  
+      askdepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32    
+      biddepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      expected_auction_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      closing_price_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      trading_halt:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+  IFMSRPD0022:  # 증권 snapshot (MM/LP호가 포함)
+    name: StockWithLPSnapshotMessage
+    contains: stock_with_lp_snapshot
+    code: B2
+    subcodes:
+      - 02S
+      - 03S
+      - 04S 
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String 
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      change_since_prev_day:
+        size: 1
+        datatype_py: int
+      price_change_since_prev_day:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      upper_limit_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      lower_limit_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      current_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      opening_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      last_trade_side:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32    
+      biddepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      expected_trade_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      expected_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      closing_price_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      trading_halt:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      elw_early_termination:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      elw_early_termination_time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+  IFMSRPD0044:  # 파생 시세 snapshot
+    name: DerivativeL5SnapshotMessage
+    contains: derivative_l5_snapshot
+    code: B2
+    subcodes:
+      - 01F
+      - 02F
+      - 03F
+      - 06F
+      - 07F
+      - 08F
+      - 09F
+      - 10F
+      - 11F
+      - 12F
+      - 13F
+      - 15F
+      - 16F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      upper_limit_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      lower_limit_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      nearby_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      distant_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      opening_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      open_interest:
+        size: 10
+        datatype_py: int
+      accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      last_trade_side:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      l1askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l1bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      askdepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      biddepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSRPD0045:  # 파생 snapshot (우선호가 10단계)
+    name: DerivativeL10SnapshotMessage
+    contains: derivative_l10_snapshot
+    code: B2
+    subcodes:
+      - 04F
+      - 05F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      upper_limit_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      lower_limit_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      nearby_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      distant_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      opening_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      open_interest:
+        size: 10
+        datatype_py: int
+      accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      last_trade_side:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      l1askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l1bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l6askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l6bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l7askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l7bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l8askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l8bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l9askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l9bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l10askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l10bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      askdepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      biddepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+############################################################
+  IFMSRPD0002:  # 증권 우선호가 (MM/LP호가 제외)
+    name: StockMarketdepthMessage
+    contains: stock_marketdepth
+    code: B6
+    subcodes:
+      - 01S
+      - 02S
+      - 03S
+      - 01Q
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      expected_trade_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      expected_auction_size:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+  IFMSRPD0003:   # 증권 우선호가 (MM/LP 호가 포함) length 795, ETF orderbook 
+    name: StockWithLPMarketdepthMessage
+    contains: stock_with_lp_marketdepth
+    code: B7
+    subcodes:
+      - 02S
+      - 03S
+      - 04S
+    fields: 
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      expected_auction_size:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+  IFMSRPD0034:    # 파생 우선호가 (우선호가 5단계)
+    name: DerivativeL5MarketdepthMessage
+    contains: derivative_l5_marketdepth
+    code: B6
+    subcodes:
+      - 01F
+      - 02F
+      - 03F
+      - 06F
+      - 07F
+      - 08F
+      - 09F
+      - 10F
+      - 11F
+      - 12F
+      - 13F
+      - 14F
+      - 15F
+      - 16F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      l1askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l1bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      askdepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      biddepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSRPD0035:  # 파생 우선호가 (우선호가 10단계)
+    name: DerivativeL10MarketdepthMessage
+    contains: derivative_l10_marketdepth
+    code: B6
+    subcodes:
+      - 04F
+      - 05F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      l1askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l1bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l6askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l6bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l7askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l7bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l8askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l8bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l9askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l9bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l10askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l10bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      askdepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      biddepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSSTD0006:   # 거래상위 5개 회원 통계
+    name: Top5TraderStatisticsMessage
+    contains: top_5_trader_statistics
+    code: B9
+    subcodes:
+      - 01S
+      - 01Q
+      - 02S
+      - 03S
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      top1_sell_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top1_sell_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top1_sell_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top1_buy_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top1_buy_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top1_buy_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top2_sell_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top2_sell_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top2_sell_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top2_buy_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top2_buy_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top2_buy_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top3_sell_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top3_sell_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top3_sell_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top3_buy_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top3_buy_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top3_buy_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top4_sell_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top4_sell_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top4_sell_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top4_buy_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top4_buy_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top4_buy_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top5_sell_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top5_sell_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top5_sell_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      top5_buy_member_no:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      top5_buy_member_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      top5_buy_member_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  BV03S:
+    name: ETFNAVMessage
+    contains: etf_nav
+    code: BV
+    subcodes:
+      - 03S
+    fields: 
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      time:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      previous_day_nav:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      intraday_final_nav:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 28
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  BW03S:
+    name: ETFExpectedNAVMessage
+    contains: etf_expected_nav
+    code: BW
+    subcodes:
+      - 03S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      time:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      previous_day_nav:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      intraday_final_nav:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+########################################################
+  C702S:
+    name: ELWInvestorSensitivityMessage
+    contains: elw_investor_sensitivity
+    code: C7
+    subcodes:
+      - 02S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      calculation_time:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      standard_theoretical_price:
+        size: 10
+        datatype_py: float
+      sensitivity_delta_sign:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      sensitivity_delta:
+        size: 7
+        datatype_py: float
+        datatype_rs: float
+      sensitivity_gamma_sign:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      sensitivity_gamma:
+        size: 7
+        datatype_py: float
+        datatype_rs: float
+      sensitivity_theta_sign:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      sensitivity_theta:
+        size: 12
+        datatype_py: float
+        datatype_rs: float
+      sensitivity_vega_sign:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      sensitivity_vega:
+        size: 12
+        datatype_py: float
+        datatype_rs: float
+      sensitivity_rho_sign:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      sensitivity_rho:
+        size: 12
+        datatype_py: float
+        datatype_rs: float
+      implied_volatility:
+        size: 5
+        datatype_py: float
+      general_expenses:
+        size: 10
+        datatype_py: float
+      filler:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSBTD0002:  # 증권 지수지표  
+    name: EquityIndexAndInvestorIndicatorMessage
+    contains: equity_index_and_investor_indicator
+    code: CA
+    subcodes:
+      - 01S
+      - 01Q
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      security_group_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      eps_calculation:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      eps:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      loss_category:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      per:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      bps_calculation:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      bps:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      pbr:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      dps_calculation:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      dps:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      dividend_yield:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      market_capitalization_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      manufacturing:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      index_classification_level_1:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      index_classification_level_2:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      index_classification_level_3:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      kospi200_sector_code_1:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      kospi200_sector_code_2:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      kospi:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      kosdaq:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      kospi100:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      kospi50:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      kosdaq150:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      krx100:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      krx300:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      kospi200_high_dividend_yield_index:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      krx_bbig_k_new_deal_index:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      krx_secondary_battery_k_new_deal_index:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      krx_bio_k_new_deal_index:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      filler:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  ######################################
+  F101S:
+    name: ForeignerTradeStatisticsMessage
+    contains: foreigner_trade_statistics
+    code: F1
+    subcodes:
+      - 01Q
+      - 013
+      - 01X
+      - 00B
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      trade_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      item_limit_ratio:
+        size: 5
+        datatype_py: float
+      individual_limit_rate:
+        size: 5
+        datatype_py: float
+      listed_shares_number:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      available_order_quantity:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      limit_exhaustion_classification:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      filler:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  F201S:
+    name: ForeignerAvailableOrderAmountMessage
+    contains: foreigner_available_order_amount
+    code: F2
+    subcodes:
+      - 01S
+      - 01Q
+      - 013
+      - 01X
+      - 00B
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      available_order_quantity:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      data_type:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      filler:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  F301S:
+    name: ForeignerPreOrderMessage
+    contains: foreigner_pre_order
+    code: F3
+    subcodes:
+      - 01S
+      - 01Q
+      - 013
+      - 01X
+      - 00B
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      data_type:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      treatment_classification:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      pre_order_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      pre_order_start_time:
+        size: 4
+        datatype_py: str
+        datatype_rs: String
+      pre_order_end_time:
+        size: 4
+        datatype_py: str
+        datatype_rs: String
+      filler:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  F401S:
+    name: ForeignerPositionLimitRatioMessage
+    contains: foreigner_position_limit_ratio
+    code: F4
+    subcodes:
+      - 01S
+      - 01Q
+      - 013
+      - 01X
+      - 00B
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      limit_ratio:
+        size: 5
+        datatype_py: float
+      individual_limit_ratio:
+        size: 5
+        datatype_py: float
+      num_listed_shares:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      available_order_quantity:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      limit_exhaustion_classification:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      filler:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  F501S:
+    name: ForeignerPositionLimitMessage
+    contains: foreigner_position_limit
+    code: F5
+    subcodes:
+      - 01S
+      - 01Q
+      - 013
+      - 01X
+      - 00B
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      category:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      quantity:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      price:
+        size: 7
+        datatype_py: float
+        datatype_rs: float
+      time:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      filler:
+        size: 7
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  F601S:
+    name: ForeignerTransactionMessage
+    contains: foreigner_transaction
+    code: F6
+    subcodes:
+      - 01S
+      - 01Q
+      - 013
+      - 01X
+      - 00B
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      category:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      total_bid_quantity:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      total_bid_price:
+        size: 15
+        datatype_py: float
+      total_ask_quantity:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      total_ask_price:
+        size: 15
+        datatype_py: float
+      net_bid_quantity_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      net_bid_quantity:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      net_bid_price_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      net_bid_price:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      filler:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  F803S:
+    name: ETFPDFMessage
+    contains: etf_pdf
+    code: F8
+    subcodes:
+      - 03S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      data_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      corporate_identification_number:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      constituents_number:
+        size: 4
+        datatype_py: int
+        datatype_rs: i32
+      component_isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      securities_per_1_cu_or_contract_units_or_korean_won_cash:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      constituents_market_classification:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      constituents_name:
+        size: 40
+        datatype_py: str
+        datatype_rs: String
+      par_value_or_initial_cash_amount:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      ex_dividend_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      valuation_amount:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 4
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  ######################################
+  IFMSRPD0006:   # 증권 체결 + 우선호가 (MM/LP호가 제외)
+    name: StockTradeAndMarketdepthMessage
+    contains: stock_trade_and_marketdepth
+    code: G7
+    subcodes:
+      - 01X
+      - 01S
+      - 01Q
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      price_change_since_previous_day_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      price_change_since_previous_day_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      trading_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      trading_volume:
+        size: 10
+        datatype_py: int
+      opening_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      accumulated_trading_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trading_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      trade_type:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      lp_holding_quantity:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+    
+  IFMSRPD0007:  # 증권 체결 + 우선호가 (MM/LP호가 포함)
+    name: StockWithLPTradeAndMarketdepthMessage
+    contains: stock_with_lp_trade_and_marketdepth
+    code: G7
+    subcodes:
+      - 02S
+      - 03S
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      price_change_since_previous_day_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      price_change_since_previous_day_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      trading_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      trading_volume:
+        size: 10
+        datatype_py: int
+      opening_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      accumulated_trading_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trading_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      trade_type:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      lp_holding_quantity:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+    
+
+  # 파생체결 + 우선호가 (5단계) length 
+  IFMSRPD0037:  
+    name: DerivativeTradeAndL5MarketdepthMessage
+    contains: derivative_trade_and_l5_marketdepth
+    code: G7
+    subcodes:
+      - 01F
+      - 02F
+      - 03F
+      - 06F
+      - 07F
+      - 08F
+      - 09F
+      - 10F
+      - 11F
+      - 12F
+      - 13F
+      - 15F
+      - 16F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      trade_volume:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      nearby_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      distant_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      opening_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      previous_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      trade_type:
+        size: 1
+        datatype_py: decode_side
+        datatype_rs: String
+      dynamic_price_range_upper_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      dynamic_price_range_lower_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l1bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      askdepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      biddepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  # 파생체결 + 우선호가 (10단계) length 
+  IFMSRPD0038:  
+    name: DerivativeTradeAndL10MarketdepthMessage
+    contains: derivative_trade_and_l10_marketdepth
+    code: G7
+    subcodes:
+      - 04F
+      - 05F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      trade_volume:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      nearby_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      distant_month_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      opening_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      high_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      low_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      previous_trade_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      accumulated_trade_volume:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      accumulated_trade_value:
+        size: 22
+        datatype_py: float
+        datatype_rs: double
+      trade_type:
+        size: 1
+        datatype_py: decode_side
+        datatype_rs: String
+      dyanmic_price_range_upper_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      dynamic_price_range_lower_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l1bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l6askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l6bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l7askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l7bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l8askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l8bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l9askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l9bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l10askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l10bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      askdepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      biddepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  ####################################################
+  IFMSRID0009:   # 선물종목 정산가격 데이터
+    name: DerivativeSettledPriceMessage
+    contains: derivative_settled_price
+    code: H3
+    subcodes:
+      - 01F
+      - 02F
+      - 04F
+      - 06F
+      - 08F
+      - 09F
+      - 10F
+      - 11F
+      - 13F
+      - 14F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      settlement_price:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      settlement_price_type_code:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      final_settlement_price:
+        size: 18
+        datatype_py: float
+        datatype_rs: double
+      final_settlement_price_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  IFMSRID0013:   # 상품선물 현물정보 결제기준 국고채권 수익률 및 CD금리
+    name: SettlementReferenceKTBCDBISMessage
+    contains: settlement_reference_ktb_cd_bis
+    code: H5
+    subcodes: 
+      - 06F
+      - 99F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      bis_announcement_date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      bis_annoucement_time:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      bis_yield_ratio:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      ktb_isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      bis_published_time:
+        size: 4
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  ####################################################
+  L503S:
+    name: OverseasIndexETFNAVMessage
+    contains: overseas_index_etf_nav
+    code: L5
+    subcodes:
+      - 03S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      time:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      previous_day_nav:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      intraday_final_nav:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 28
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+     
+  ####################################################
+  N302S:
+    name: ELWLPImpliedVolatilityMessage
+    contains: elw_lp_implied_volatility
+    code: N3
+    subcodes:
+      - 02S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      calculation_time:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      isin_1:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_1:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_2:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_2:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_3:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_3:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_4:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_4:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_5:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_5:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_6:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_6:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_7:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_7:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_8:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_8:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_9:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_9:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_10:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_10:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_11:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_11:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_12:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_12:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_13:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_13:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_14:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_14:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_15:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_15:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_16:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_16:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_17:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_17:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_18:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_18:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_19:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_19:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_20:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_20:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_21:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_21:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_22:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_22:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_23:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_23:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_24:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_24:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_25:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_25:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_26:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_26:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_27:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_27:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_28:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_28:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_29:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_29:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_30:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_30:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_31:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_31:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_32:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_32:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_33:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_33:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_34:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_34:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_35:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_35:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_36:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_36:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_37:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_37:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_38:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_38:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_39:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_39:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_40:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_40:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_41:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_41:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_42:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_42:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_43:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_43:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_44:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_44:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_45:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_45:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_46:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_46:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_47:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_47:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_48:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_48:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_49:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_49:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      isin_50:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_50:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      filler:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  ####################################
+  IFMSRID0011:
+    name: OptionsImpliedVolatilityMessage
+    contains: options_implied_volatility
+    code: P1
+    subcodes:
+      - 03F
+      - 12F
+      - 15F
+      - 16F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      call_avg_implied_volatility:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      put_avg_implied_volatility:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      implied_volatility:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      historical_90day_volatility:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  IFMSRID0012:
+    name: OptionsGreekMessage
+    contains: options_greek
+    code: N7
+    subcodes:
+      - 03F
+      - 05F
+      - 07F
+      - 12F
+      - 15F
+      - 16F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      implied_volatility_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      underlying_asset_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      delta:
+        size: 20
+        datatype_py: float
+        datatype_rs: double
+      theta:
+        size: 20
+        datatype_py: float
+        datatype_rs: double
+      vega:
+        size: 20
+        datatype_py: float
+        datatype_rs: double
+      gamma:
+        size: 20
+        datatype_py: float
+        datatype_rs: double
+      rho:
+        size: 20
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  P603S:
+    name: ETFDivergenceMessage
+    contains: etf_divergence
+    code: P6
+    subcodes:
+      - 03S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      sequence_number:
+        size: 8
+        datatype_py: int
+        datatype_rs: i32
+      date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      tracking_error_rate:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      deviation_rate_sign:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      deviation_rate:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 7
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  P703S:
+    name: OverseasIndexETFDivergenceMessage
+    contains: overseas_index_etf_divergence
+    code: P7
+    subcodes:
+      - 03S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      sequence_number:
+        size: 8
+        datatype_py: int
+        datatype_rs: i32
+      date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      tracking_error_rate:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      deviation_rate_sign:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      deviation_rate:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 7
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  ##############################
+  IFMSRPD0009:   # 증권 장운영 TS + 우선호가 (MM/LP호가 제외)
+    name: StockBoardEventAndMarketdepthMessage
+    contains: stock_board_event_and_marketdepth
+    code: R1
+    subcodes:
+      - 01S
+      - 02S
+      - 03S
+      - 04S
+      - 01Q
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      board_event_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_event_start_time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      board_event_group_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      trading_halt_reason_code:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      expected_auction_volume:
+        size: 12
+        datatype_py: float
+        datatype_rs: float
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+  IFMSRPD0010:   # 증권 장운영 TS + 우선호가 (MM/LP호가)
+    name: StockWithLPBoardEventAndMarketdepthMessage
+    contains: stock_with_lp_board_event_and_marketdepth
+    code: R1
+    subcodes:
+      - 01S
+      - 02S
+      - 03S
+      - 04S
+      - 01Q
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      board_event_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_event_start_time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      board_event_group_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      trading_halt_reason_code:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      l1askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl1asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl1bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl2asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl2bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpasksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpbidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl4asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl4bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl5asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl5bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl6asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl6bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl7asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl7bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl8asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl8bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl9asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl9bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl10asksize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      lpl10bidsize:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 12
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      expected_auction_volume:
+        size: 12
+        datatype_py: float
+        datatype_rs: float
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+
+  IFMSRPD0039:   # 파생 장운영 TS + 우선호가 (5단계) length 350
+    name: DerivativeBoardEventAndL5MarketdepthMessage
+    contains: derivative_board_event_and_l5_marketdepth
+    code: R1
+    subcodes:
+      - 01F
+      - 02F
+      - 03F
+      - 06F
+      - 07F
+      - 08F
+      - 09F
+      - 10F
+      - 11F
+      - 12F
+      - 13F
+      - 16F 
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      board_event_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_event_start_time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      board_event_group_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      dyanmic_price_range_upper_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      dyanmic_price_range_lower_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l1bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      askdepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      biddepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  
+  IFMSRPD0040:   # 파생 장운영 TS + 우선호가 (10단계) length 350
+    name: DerivativeBoardEventAndL10MarketdepthMessage
+    contains: derivative_board_event_and_l10_marketdepth
+    code: R1
+    subcodes:
+      - 04F
+      - 05F
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      session_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      board_event_id:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      board_event_start_time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      board_event_group_code:
+        size: 5
+        datatype_py: str
+        datatype_rs: String
+      dynamic_price_range_upper_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      dynamic_price_range_lower_limit:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l1asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l1askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l1bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l2asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l2askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l2bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l3asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l3askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l3bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l4asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l4askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l4bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l5asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l5askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l5bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l6askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l6bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l6asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l6bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l6askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l6bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l7askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l7bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l7asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l7bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l7askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l7bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l8askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l8bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double  
+      l8asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l8bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l8askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l8bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l9askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l9bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l9asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l9bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l9askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l9bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l10askprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l10bidprice:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      l10asksize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l10bidsize:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      l10askno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      l10bidno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      askdepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      biddepth:
+        size: 9
+        datatype_py: int
+        datatype_rs: i32
+      askdepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      biddepthno:
+        size: 5
+        datatype_py: int
+        datatype_rs: i32
+      expected_auction_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+  IFMSRPD0014:     # VI 발동/해제 IFMSRPD0014
+    name: VolatilityInterruptionMessage
+    contains: volatility_interruption
+    code: R8
+    subcodes:
+      - 01S
+      - 01Q
+      - 03S
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      message_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String 
+      board_id:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      designated_issue_number:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      datetime:
+        size: 12
+        datatype_py: chrono.krx_time_to_timestamp
+        datatype_rs: i64
+      vi_ending_time:
+        size: 9
+        datatype_py: str
+        datatype_rs: String
+      vi_status_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      vi_type_code:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      base_price_trigger_static_vi:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      base_price_trigger_dynamic_vi:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      vi_triggering_price:
+        size: 11
+        datatype_py: float
+        datatype_rs: double
+      disparate_ratio_trigger_static_vi:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      disparate_ratio_trigger_dynamic_vi:
+        size: 13
+        datatype_py: float
+        datatype_rs: double
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  ####################################################
+  S104S:
+    name: ETNInformationMessage
+    contains: etn_information
+    code: S1
+    subcodes:
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      final_index_value:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      index_value_amount:
+        size: 15
+        datatype_py: int
+        datatype_rs: i64  
+      previous_day_base_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      previous_day_base_price_before_dividends:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      previous_day_cash_dividend_amount:
+        size: 12
+        datatype_py: float
+        datatype_rs: float
+      TM2_day_base_price:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      volatility_future_classification:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      minimum_early_redemption_claim_amount:
+        size: 10
+        datatype_py: int
+      redemption_free_rate:
+        size: 10
+        datatype_py: float
+      administrative_expenses:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 10
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+ 
+  S204S:
+    name: ETNCompositionMessage
+    contains: etn_composition
+    code: S2
+    subcodes:
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      data_sequence_number:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      corporate_identification_number:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      num_components:
+        size: 4
+        datatype_py: int
+        datatype_rs: i32
+      component_isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      component_name:
+        size: 80
+        datatype_py: str
+        datatype_rs: String
+      composition_ratio:
+        size: 7
+        datatype_py: float
+        datatype_rs: float
+      filler:
+        size: 60
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+  
+  S304S:
+    name: ETNIIVMessage
+    contains: etn_iiv
+    code: S3
+    subcodes:
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      time:
+        size: 6
+        datatype_py: str
+        datatype_rs: String
+      previous_day_IV:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      intraday_final_IV:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 28
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
+
+  ####################################################
+  X404S:
+    name: ETNDivergenceMessage
+    contains: etn_divergence
+    code: X4
+    subcodes:
+      - 04S
+    fields:
+      data_category:
+        size: 2
+        datatype_py: str
+        datatype_rs: String
+      information_category:
+        size: 3
+        datatype_py: str
+        datatype_rs: String
+      isin:
+        size: 12
+        datatype_py: str
+        datatype_rs: String
+      transmission_serial_number:
+        size: 8
+        datatype_py: int
+        datatype_rs: i32
+      date:
+        size: 8
+        datatype_py: str
+        datatype_rs: String
+      deviation_rate_sign:
+        size: 1
+        datatype_py: str
+        datatype_rs: String
+      deviation_rate:
+        size: 9
+        datatype_py: float
+        datatype_rs: double
+      filler:
+        size: 56
+        datatype_py: str
+        datatype_rs: String
+      system_datetime:
+        size: 19
+        datatype_py: chrono.krx_ns_to_timestamp
+        datatype_rs: i64
