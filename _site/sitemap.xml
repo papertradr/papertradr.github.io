@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://localhost:4000/math/hahn-jordan-decomposition/</loc>
+<lastmod>2021-06-01T00:00:00+09:00</lastmod>
+</url>
+<url>
 <loc>http://localhost:4000/math/hausdorffs-maximality-theorem/</loc>
 <lastmod>2021-06-29T00:00:00+09:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/reinforcement%20learning/mopo-model-basd-policy-optimization/</loc>
+<lastmod>2021-10-20T00:00:00+09:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/math/continuity-definitions/</loc>
@@ -15,6 +23,10 @@
 <url>
 <loc>http://localhost:4000/math/small-set-two-approaches/</loc>
 <lastmod>2022-01-13T00:00:00+09:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/finance/cross-sectional-variation-of-intraday-liquidity/</loc>
+<lastmod>2022-01-24T00:00:00+09:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/math/sum-of-cauchy-not-cauchy/</loc>
@@ -49,6 +61,26 @@
 <lastmod>2022-12-15T00:00:00+09:00</lastmod>
 </url>
 <url>
+<loc>http://localhost:4000/finance/krx-udp-data-and-market-microstructure/</loc>
+<lastmod>2023-05-10T00:00:00+09:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/finance/koscom-nav-and-inav/</loc>
+<lastmod>2023-05-25T00:00:00+09:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/finance/krx-elw-iv-rv/</loc>
+<lastmod>2023-06-01T00:00:00+09:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/finance/scalping/</loc>
+<lastmod>2023-07-01T00:00:00+09:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/finance/arbitrage/</loc>
+<lastmod>2023-08-01T00:00:00+09:00</lastmod>
+</url>
+<url>
 <loc>http://localhost:4000/about/</loc>
 </url>
 <url>
@@ -58,7 +90,11 @@
 <loc>http://localhost:4000/links/</loc>
 </url>
 <url>
+<loc>http://localhost:4000/assets/pdfs/Hahn_and_Jordan_Decomposition_Theorems.pdf</loc>
+<lastmod>2023-07-26T08:29:16+09:00</lastmod>
+</url>
+<url>
 <loc>http://localhost:4000/assets/pdfs/Hausdorff_s_Maximality_Theorem.pdf</loc>
-<lastmod>2023-01-30T23:37:35+09:00</lastmod>
+<lastmod>2023-07-26T08:29:16+09:00</lastmod>
 </url>
 </urlset>

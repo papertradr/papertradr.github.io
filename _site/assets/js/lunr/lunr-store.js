@@ -1,8 +1,20 @@
 var store = [{
+        "title": "Hahn and Jordan Decomposition Theorems",
+        "excerpt":"Here’s a complete proof of Hahn decomposition theorem and Jordan Decomposition theorem.            ","categories": ["math"],
+        "tags": ["measure theory","hahn decomposition theorme","jordan decomposition theorem","real analysis"],
+        "url": "/math/hahn-jordan-decomposition/",
+        "teaser": null
+      },{
         "title": "Hausdorff's maximality theorem (zorn's lemma)",
-        "excerpt":" ","categories": ["math"],
+        "excerpt":"Hausdorff’s maximality theorem (or Zorn’s lemma) is used often in graduate level real analysis course. Because the proof is a bit convoluted, most courses use it without proving it and professors usually direct us to the proof in Rudin’s real and complex analysis. There is a two page appendix that...","categories": ["math"],
         "tags": ["set theory","zorn's lemma","hausdorff's maximality theorem","real analysis"],
         "url": "/math/hausdorffs-maximality-theorem/",
+        "teaser": null
+      },{
+        "title": "MOPO - Model-based Offline Policy Optimization",
+        "excerpt":"In this post I will provide proofs for some lemmas and theorems in model-based offline policy optimization. This post doesn’t provide different proofs but rather a complete proof without omission so that readers like myself can follow the proof easily. I will assume that reader has already read the paper....","categories": ["reinforcement learning"],
+        "tags": ["reinforcement learning","offline","model-based"],
+        "url": "/reinforcement%20learning/mopo-model-basd-policy-optimization/",
         "teaser": null
       },{
         "title": "What is the definition of continuity?",
@@ -21,6 +33,12 @@ var store = [{
         "excerpt":"The notion of “smallness” in measure theory is pretty clear - when the set has measure $0$, then we can treat is as a small set, or a set with no mass. This is intuitive if we use a Lebesgue measure, but for other measures or distributions, this is not...","categories": ["math"],
         "tags": ["measure theory","topology","Baire category theorem"],
         "url": "/math/small-set-two-approaches/",
+        "teaser": null
+      },{
+        "title": "Cross Sectional Variation of Intraday Liquidity, Cross-Impact and their Effect on Portfolio Execution",
+        "excerpt":"In this post, I will share the results of my implementation of Cross-Sectional Variation of Intraday Liquidity, Cross-Impact, and their effect on Portfolio Execution. The key idea of this paper is that instead of a separable execution strategies such as VWAP, it is better to execute portfolio of orders in...","categories": ["finance"],
+        "tags": ["portfolio execution","liquidity","optimal execution"],
+        "url": "/finance/cross-sectional-variation-of-intraday-liquidity/",
         "teaser": null
       },{
         "title": "Sum of Cauchy sequence is not Cauchy",
@@ -69,5 +87,35 @@ var store = [{
         "excerpt":"We often write redundant codes. I personally had to write a parser for different market data protocols. This is not only tedious but also error prone. One way to tackle this problem is to normalize all data into a single in-house protocol. However, if there is a new protocol that...","categories": ["database"],
         "tags": ["database","mako","sql","mako"],
         "url": "/database/managing-db-with-mako/",
+        "teaser": null
+      },{
+        "title": "KRX UDP Data and Market Microstructure",
+        "excerpt":"Korean Stock Exchange (KRX) is the only securities exchange in South Korea. Equities and ETPs get traded in Seoul while futures, options, and other derivatives get traded in Busan (hence, there exists an opportunity for latency arbitrage). To gain a speed advantage, lots of firms place their trading engines near...","categories": ["finance"],
+        "tags": ["market microstructure","krx","udp"],
+        "url": "/finance/krx-udp-data-and-market-microstructure/",
+        "teaser": null
+      },{
+        "title": "Koscom NAV and iNAV",
+        "excerpt":"The net asset value of an ETF is computed by dividing the total value of the ETF’s underlying assets by the number of outstanding shares: \\[\\text{nav} = {\\text{cash} + \\sum \\text{assets} \\over \\text{number of oustanding shares}}\\] The calculation is quite easy but getting the right data can be a hassle....","categories": ["finance"],
+        "tags": ["python","etf","nav"],
+        "url": "/finance/koscom-nav-and-inav/",
+        "teaser": null
+      },{
+        "title": "ELW and implied volatility (IV)",
+        "excerpt":"There are no individual stock options in the Korean stock exchange, a stark contrast to the US market. However, Korean financial firms provide a product called ELW which is almost identical to individual stock options. Hence we will treat ELW like options and generate a volatility curve from both call...","categories": ["finance"],
+        "tags": ["elw","krx","implied volatility","iv","volatility"],
+        "url": "/finance/krx-elw-iv-rv/",
+        "teaser": null
+      },{
+        "title": "Scalping",
+        "excerpt":"There are various types of securities that we can scalp - corporate stocks/bonds, equity futures, index futures, equity options, index options and so on. For this tutorial, we will be looking at KOSDAQ150 futures. KOSDAQ150 index is composed of 150 KOSDAQ-listed stocks where the constituents are selected based on the...","categories": ["finance"],
+        "tags": ["scalping","hft","graph"],
+        "url": "/finance/scalping/",
+        "teaser": null
+      },{
+        "title": "Arbitrage",
+        "excerpt":"In our previous post, we worked with KOSDAQ150 futures. Here we will be doing the same thing with KOSPI200 futures and Mini KOSPI200 futures. Similar to the US market, mini futures contracts require less margin to trade. KOSPI200 contract has a multiplier of 250000 while Mini KOSPI200 contract has a...","categories": ["finance"],
+        "tags": ["arbitrage","hft","kospi200 futures","mini kospi200 futures"],
+        "url": "/finance/arbitrage/",
         "teaser": null
       }]

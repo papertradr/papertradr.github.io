@@ -148,3 +148,6 @@ ipch/
 
 # cpp
 _cpp/build/**
+
+# site
+_site/**
